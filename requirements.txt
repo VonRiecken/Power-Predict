@@ -2,7 +2,7 @@ pytest
 pylint
 ipdb
 jupyterlab
-# jupyternotebook
+notebook
 numpy
 pandas
 matplotlib
