@@ -1,0 +1,5 @@
+Weather for Energy Tracker User Guide:
+https://iea.blob.core.windows.net/assets/0e7b4aa1-7717-4eff-af91-8b6577ac144d/IEA_CMCC_Weather_for_Energy_Tracker_-_Users_Guide.pdf
+
+Weather for Energy Tracker source:
+https://www.iea.org/data-and-statistics/data-product/weather-for-energy-tracker

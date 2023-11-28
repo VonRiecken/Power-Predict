@@ -1,3 +1,4 @@
 raw_data/
 power_predict/data/
 .python-version
+.env
