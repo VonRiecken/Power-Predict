@@ -13,7 +13,7 @@ df = pd.read_csv('our_data.csv')  ## Replace with data source
 
 # Separating features and target variables
 features = df.drop(['target columns'], axis=1) # axis 1 to drop columns
-targets = df[['target columns'']]
+targets = df[['target columns']]
 
 # Splitting the data into training and testing sets
 X_train, X_test, y_train, y_test = train_test_split(features, targets, test_size=0.2, random_state=42)
