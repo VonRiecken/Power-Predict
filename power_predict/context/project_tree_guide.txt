@@ -1,0 +1,41 @@
+Following the structure from the taxifare (07-ML-OPS/04-Predict-in-production)
+
+├── notebooks                                                             (for testing and experimenting - remember to move all info to scripts)
+│   └── weather_data_extraction.ipynb
+├── power_predict
+│   ├── context
+│   │   ├── Final Project Pitch.slides - final.html
+|   |   ├── project_tree.txt
+│   │   └── appendices.txt
+│   ├── data
+│   │   └── merged_dataset.csv
+│   ├── logic                                                          (implementable functions)
+│   │   ├── __init__.py
+│   │   ├── data.py                                                       (functions to create, clean, loading to BQ, pulling from BQ)
+│   │   ├── model.py                                                      (functions to initialise, compile, train, evaluate)
+│   │   ├── preprocessor.py                                               (preprocessing data for the model/s)
+│   │   └── registry.py                                                   (saving results, saving models, load models, transition mlflow model, mlflow run )
+│   ├── params.py                                                      (parameters to be working with apis and virtual machines)
+│   ├── __init__.py
+│   ├── api
+│   │   ├── __init__.py
+│   │   └── fastapi.py                                                     (to create the api)
+│   ├── interface
+│   │   ├── __init__.py
+│   │   ├── workflow.py                                                    (defining the workflow for prefect)
+│   │   └── main.py                                                        (calling functions to make it all actually run)
+│   ├── models                                                             (for models)
+│   │   ├── tpot.py
+│   │   ├── XGBoost.py
+│   |   └── etc.
+├── raw_data (in git ignore)
+│   ├── all csvs from the Energy Tracker
+│   └── Weather for energy tracker - highlights (output).xlsb
+├── README.md
+├── Makefile
+├── requirements.txt
+├── .env
+├── .env.yaml
+├── .envrc
+├── Dockerfile
+└── setup.py
