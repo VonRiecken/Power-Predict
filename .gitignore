@@ -23,3 +23,7 @@ mlruns
 
 # IDE #
 *.vscode
+
+
+# Sandboxes
+sandbox.ipynb
