@@ -2,7 +2,7 @@ import os
 import numpy as np
 
 ##################  VARIABLES  ##################
-# MODEL_TARGET = os.environ.get("MODEL_TARGET")
+MODEL_TARGET = os.environ.get("MODEL_TARGET")
 # GCP_PROJECT = os.environ.get("GCP_PROJECT")
 # GCP_REGION = os.environ.get("GCP_REGION")
 # BQ_DATASET = os.environ.get("BQ_DATASET")
@@ -16,6 +16,8 @@ import numpy as np
 ##################  CONSTANTS  #####################
 LOCAL_DATA_PATH = os.path.join(os.path.expanduser('~'), ".lewagon", "final_project", "data")
 LOCAL_REGISTRY_PATH =  os.path.join(os.path.expanduser('~'), ".lewagon", "final_project", "training_outputs")
+LOCAL_PATH_PARAMS = os.path.dirname(os.path.abspath(__file__))
+
 
 PREDICTION_TARGETS = ['Solar', 'Wind', 'Hydro', 'Total']
 COUNTRIES_LIST = ['Argentina', 'Australia', 'Austria', 'Belgium', 'Brazil', 'Bulgaria', 'Canada', 'Chile', 'Colombia',
