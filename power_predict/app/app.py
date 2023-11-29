@@ -1,8 +1,14 @@
 import streamlit as st
 import requests
 
+from power_predict.params import COUNTRIES_LIST, PREDICTION_TARGETS
+
+country_list = COUNTRIES_LIST
+target_list = PREDICTION_TARGETS
+
 # call parameters
-country = st.text_input('Country')
+target = st.selectbox('Energy source', target_list)
+country = st.selectbox('Country', country_list)
 cdd_18 = st.number_input('Cooling Degree Days above 18', format='%.4f')
 cdd_21 = st.number_input('Cooling Degree Days above 21', format='%.4f')
 irradiance = st.number_input('Global Horizontal Irrandiance', format='%.4f')
@@ -12,9 +18,6 @@ heat_index = st.number_input('Heat Index', format='%.4f')
 humidity = st.number_input('Relative humidity', format='%.4f')
 temp = st.number_input('Avergage temperature', format='%.4f')
 precipitation = st.number_input('Total precipitaiton', format='%.4f')
-
-
-url_ = 'placeholder' # TODO
 
 params_ = {
     "Country": country,
@@ -30,13 +33,11 @@ params_ = {
     }
 
 if st.button('Get Renewable Energy prediction'):
-    res = requests.get(url=url_,
-                       params=params_)
+    res = 300
+    # model.predict()
+    # prediction = res.json()['total target (wind, solar, hydro)']
 
-    if res.status_code != 200:
-        st.error('Error in API connection')
 
-    else:
-        prediction = res.json()['total target (wind, solar, hydro)']
-
-st.success(f'Prediction: {prediction}')
+# st.success(f'Prediction: {prediction}')
+trial = res
+st.success(f"{country}'s {target} production will be {trial}")
