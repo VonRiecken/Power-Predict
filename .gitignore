@@ -1,4 +1,34 @@
-.python-version
 .env
+<<<<<<< HEAD
 .ipynb_checkpoints/
 .DS_Store
+=======
+
+# OS generated files #
+######################
+.DS_Store
+power_predict/.DS_Store
+__MACOSX
+
+# Jupiter Notebook #
+.pytest_cache
+__pycache__
+*checkpoint.ipynb
+*.ipynb_checkpoints
+
+# inteliJ #
+.idea
+*.gz
+*PKG-INFO
+*.egg-info
+*.zip
+mlruns
+*.sqlite
+
+# IDE #
+*.vscode
+
+
+# Sandboxes
+sandbox.ipynb
+>>>>>>> 2071eccc93ef9821a0a630426b02d420f069f491

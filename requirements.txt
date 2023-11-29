@@ -9,3 +9,5 @@ matplotlib
 seaborn
 scikit-learn
 requests
+streamlit
+tpot
