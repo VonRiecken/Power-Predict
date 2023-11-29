@@ -38,7 +38,6 @@ def save_model(model) -> None:
 
     # Save model locally
     model_path = os.path.join(LOCAL_PATH_PARAMS, 'models', 'saved_models', f"{timestamp}.h5")
-    # model_path = os.path.join(LOCAL_REGISTRY_PATH, "models", f"{timestamp}.h5")
     with open(model_path, 'wb') as file:
         pickle.dump(model, file)
 
