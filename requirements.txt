@@ -11,5 +11,3 @@ scikit-learn
 requests
 streamlit
 tpot
-google-cloud
-google-cloud-storage
