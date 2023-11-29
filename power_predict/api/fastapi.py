@@ -38,7 +38,7 @@ def predict(
 
     X_pred_preprocessed = preprocess_features(X_pred)
 
-    app.state.model = load_model(stage='Production')
+    app.state.model = load_model()
     y_pred = app.state.model.predict(X_pred_preprocessed)
 
     return dict(total_renewable=float(y_pred))

@@ -2,9 +2,11 @@
 
 # OS generated files #
 ######################
-.DS_Store
+*.DS_Store
 power_predict/.DS_Store
 __MACOSX
+build/
+dist/
 
 # Jupiter Notebook #
 .pytest_cache
@@ -24,6 +26,6 @@ mlruns
 # IDE #
 *.vscode
 
-
 # Sandboxes
 sandbox.ipynb
+sandbox.py

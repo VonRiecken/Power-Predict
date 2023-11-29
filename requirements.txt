@@ -10,3 +10,5 @@ seaborn
 scikit-learn
 requests
 streamlit
+google-cloud
+google-cloud-storage
