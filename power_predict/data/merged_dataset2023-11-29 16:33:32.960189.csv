@@ -1,4 +1,4 @@
-,Month_year,Country,Balance,Combustible Renewables,Hydro,Other Renewables,Solar,"Total Renewables (Hydro, Geo, Solar, Wind, Other)",Wind,value_CDD_18,value_CDD_21,value_Global_Horizontal_Irrandiance,value_HDD_16,value_HDD_18,value_Heat_index,value_Relative_Humidty,value_Temperature,value_Total_Precipitation,"total target (wind, solar, hydro)"
+,Month_year,Country,Balance,Combustible_Renewables,Hydro,Other_Renewables,Solar,Total_Renewables__Hydro__Geo__Solar__Wind__Other_,Wind,value_CDD_18,value_CDD_21,value_Global_Horizontal_Irrandiance,value_HDD_16,value_HDD_18,value_Heat_index,value_Relative_Humidty,value_Temperature,value_Total_Precipitation,total_sol_wind_hyd
 0,2010-04-01,Australia,Net Electricity Production,216.287,1044.406,0.0,26.811,1638.098,350.511,48.13,12.62,720994.0,17.47,37.08,18.41,57.37,23.21,0.05483,1421.728
 1,2010-04-01,Austria,Net Electricity Production,350.383,2504.13,0.0,9.965,2995.696,131.107,0.05449,0.0,736161.0,228.9,287.8,8.41,69.85,6.748,0.1051,2645.202
 2,2010-04-01,Belgium,Net Electricity Production,383.177,141.898,0.0,80.419,702.509,97.015,0.9916,0.0,723195.0,195.8,253.7,9.577,67.9,9.322,0.03999,319.332
