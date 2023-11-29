@@ -1,0 +1,47 @@
+### MVP ###
+
+Given the simplicity of our model and data, our initial setup will primarily
+involve Big Query and Streamlit.
+
+Big Query:
+We'll use Big Query to store and manage our data efficiently, allowing us to
+access it from anywhere.  Not critical to our project but useful to familiarize
+ourselves with a tool that is critical in any future data-science job/prject.
+
+Streamlit:
+an open-source app framework specifically for Machine Learning and Data Science
+teams. In our case, we'll train our model locally and then upload the trained
+model to Streamlit Cloud.
+Streamlit will serve two main purposes: 1) hosting our model for predictions,
+and 2) acting as the user interface for interacting with our model.
+
+
+
+#### Additional Tools Post-MVP ###
+
+FastAPI:
+Once our MVP is established, we can incorporate FastAPI for faster API calls.
+FastAPI woulp help in enhancing the responsiveness and scalability of our
+application.
+
+Docker:
+We could integrate it to manage a much higher volume of API calls.
+Docker containers allow us to package up an application with all the parts it
+needs, and ship it all out as one package. This approach is beneficial for
+ensuring consistency across multiple development and release cycles, improving
+our application's scalability and reliability.
+
+Prefect:
+While it's not necessary for our current models and data size, Prefect offers
+advanced scheduling and orchestration capabilities that could enhance our data
+processing pipeline. We could incorporate it for learing purposes.
+Should we aquire a much larger dataset for model training, and thus need more
+complex comuptation, then Prefect would be a useful tool.
+
+ML Flow:
+Relevat if we find new data sources that are regularly updated so we could
+retrain our model as new data comes in, ensuring our model remains accurate and
+relevant over time.
+ML Flow is used to manage the end-to-end machine learning lifecycle.
+It is capable of tracking experiments, packaging code into reproducible
+runs, and sharing and deploying models.
