@@ -1,19 +1,18 @@
 .env
+.ipynb_checkpoints/
+.DS_Store
+
 
 # OS generated files #
 ######################
 *.DS_Store
-power_predict/.DS_Store
 __MACOSX
-build/
-dist/
 
 # Jupiter Notebook #
 .pytest_cache
 __pycache__
 *checkpoint.ipynb
 *.ipynb_checkpoints
-*.ipynb:Zone.Identifier
 
 # inteliJ #
 .idea
