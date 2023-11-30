@@ -1,0 +1,2 @@
+Mean Squared Error: 23716009.82130803
+Mean Absolute Error: 1343.340776659226
