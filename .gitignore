@@ -1,4 +1,5 @@
 .env
+.env.yaml
 .ipynb_checkpoints/
 .DS_Store
 
@@ -7,6 +8,8 @@
 ######################
 *.DS_Store
 __MACOSX
+build/
+dist/
 
 # Jupiter Notebook #
 .pytest_cache

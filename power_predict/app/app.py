@@ -1,7 +1,7 @@
 import streamlit as st
 import requests
 
-from power_predict.params import COUNTRIES_LIST, PREDICTION_TARGETS
+from power_predict.params import COUNTRIES_LIST, PREDICTION_TARGETS, SERVICE_URL
 
 st.title('Power Predict')
 
@@ -34,12 +34,15 @@ params_ = {
     "value_Total_Precipitation": precipitation
     }
 
+api_url = SERVICE_URL
+
 if st.button('Get Renewable Energy prediction'):
-    res = 300
+    res = requests.get(api_url, params=params_)
+    prediction = res#.json()[0]
     # model.predict()
     # prediction = res.json()['total target (wind, solar, hydro)']
 
 
 # st.success(f'Prediction: {prediction}')
-trial = res
+trial = prediction
 st.success(f"{country}'s {target} production will be {trial} GWh")

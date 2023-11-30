@@ -11,3 +11,6 @@ scikit-learn
 requests
 streamlit
 tpot
+uvicorn
+fastapi
+docker
