@@ -1,13 +1,18 @@
 .env
 <<<<<<< HEAD
+<<<<<<< HEAD
 .ipynb_checkpoints/
 .DS_Store
 =======
+=======
+.ipynb_checkpoints/
+.DS_Store
+
+>>>>>>> a5af15a1d3c8793377ee05a03cccea4e5b64855b
 
 # OS generated files #
 ######################
-.DS_Store
-power_predict/.DS_Store
+*.DS_Store
 __MACOSX
 
 # Jupiter Notebook #
@@ -28,7 +33,10 @@ mlruns
 # IDE #
 *.vscode
 
-
 # Sandboxes
 sandbox.ipynb
+<<<<<<< HEAD
 >>>>>>> 2071eccc93ef9821a0a630426b02d420f069f491
+=======
+sandbox.py
+>>>>>>> a5af15a1d3c8793377ee05a03cccea4e5b64855b

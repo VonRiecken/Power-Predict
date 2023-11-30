@@ -28,7 +28,7 @@ def save_results(params: dict, metrics: dict) -> None:
 
     print("✅ Results saved locally")
 
-def save_model(model: keras.Model = None) -> None:
+def save_model(model) -> None:
     """
     Persist trained model locally on the hard drive at f"{LOCAL_REGISTRY_PATH}/models/{timestamp}.h5"
     - if MODEL_TARGET='gcs', also persist it in your bucket on GCS at "models/{timestamp}.h5"
@@ -37,8 +37,9 @@ def save_model(model: keras.Model = None) -> None:
     timestamp = time.strftime("%Y%m%d-%H%M%S")
 
     # Save model locally
-    model_path = os.path.join(LOCAL_REGISTRY_PATH, "models", f"{timestamp}.h5")
-    model.save(model_path)
+    model_path = os.path.join(LOCAL_PATH_PARAMS, 'models', 'saved_models', f"{timestamp}.h5")
+    with open(model_path, 'wb') as file:
+        pickle.dump(model, file)
 
     if MODEL_TARGET == "gcs":
         model_filename = model_path.split("/")[-1] # e.g. "20230208-161047.h5" for instance
@@ -54,7 +55,7 @@ def save_model(model: keras.Model = None) -> None:
     return None
 
 
-def load_model(stage="Production") -> 'model':
+def load_model():
     """
     Return a saved model:
     - locally (latest one in alphabetical order)
@@ -62,3 +63,49 @@ def load_model(stage="Production") -> 'model':
     Return None (but do not Raise) if no model is found
 
     """
+
+    if MODEL_TARGET == 'local':
+        print(f"Load latest model from local registry.")
+
+        # Get the latest model version name by the timestamp on disk
+        # local_model_directory = os.path.join(LOCAL_REGISTRY_PATH, "models")
+        local_model_directory = os.path.join(LOCAL_PATH_PARAMS, 'models', 'saved_models')
+        local_model_paths = glob.glob(f"{local_model_directory}/*")
+
+        if not local_model_paths:
+            print('No models found in the directory')
+            return None
+
+        most_recent_model_path_on_disk = sorted(local_model_paths)[-1]
+
+        print(f"Load latest model from disk...")
+
+        with open(most_recent_model_path_on_disk, 'rb') as file:
+            latest_model = pickle.load(file)
+
+        print("✅ Model loaded from local disk")
+
+        return latest_model
+
+    elif MODEL_TARGET == "gcs":
+        print(f"\nLoad latest model from GCS...")
+
+        client = storage.Client()
+        blobs = list(client.get_bucket(BUCKET_NAME).list_blobs(prefix="model"))
+
+        try:
+            latest_blob = max(blobs, key=lambda x: x.updated)
+            latest_model_path_to_save = os.path.join(LOCAL_REGISTRY_PATH, latest_blob.name)
+            latest_blob.download_to_filename(latest_model_path_to_save)
+
+            latest_model = keras.models.load_model(latest_model_path_to_save)
+
+            print("✅ Latest model downloaded from cloud storage")
+
+            return latest_model
+        except:
+            print(f"\n❌ No model found in GCS bucket {BUCKET_NAME}")
+
+            return None
+    else:
+        return None
