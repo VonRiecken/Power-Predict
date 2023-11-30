@@ -38,7 +38,7 @@ api_url = SERVICE_URL
 
 if st.button('Get Renewable Energy prediction'):
     res = requests.get(api_url, params=params_)
-    prediction = res#.json()[0]
+    prediction = res.status_code#.json()[0]
     # model.predict()
     # prediction = res.json()['total target (wind, solar, hydro)']
 
