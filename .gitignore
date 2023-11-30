@@ -28,4 +28,8 @@ mlruns
 
 # Sandboxes
 sandbox.ipynb
+<<<<<<< HEAD
 sandbox.py
+=======
+sandbox.py
+>>>>>>> a5af15a1d3c8793377ee05a03cccea4e5b64855b

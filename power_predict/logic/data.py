@@ -163,6 +163,16 @@ def cleaning_weather_data():
     ## Specifying the data type 'datetime' of the Month_year column (needed to upload to BigQuery)
     final['Month_year'] = pd.to_datetime(final['Month_year'])
 
+    ## We're finally going to scale the columns related to the weather data
+    ## Standard Scaler Object
+    scaler = StandardScaler()
+
+    ## We will only scale the columns containing 'value' in their naming
+    to_be_scaled = [col for col in final.columns if 'value' in col]
+
+    # Fit and transform only the selected columns
+    final[to_be_scaled] = scaler.fit_transform(final[to_be_scaled])
+
     ##os.makedirs(final_path, exist_ok=True) ## We check if the folder power_predict/data exists, if not, we create it
 
     root_path = root_path = os.path.dirname(os.path.dirname(os.path.dirname(__file__))) ## We call the path of the current folder
