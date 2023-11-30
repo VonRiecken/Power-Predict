@@ -3,6 +3,8 @@ import requests
 
 from power_predict.params import COUNTRIES_LIST, PREDICTION_TARGETS
 
+st.title('Power Predict')
+
 country_list = COUNTRIES_LIST
 target_list = PREDICTION_TARGETS
 
@@ -40,4 +42,4 @@ if st.button('Get Renewable Energy prediction'):
 
 # st.success(f'Prediction: {prediction}')
 trial = res
-st.success(f"{country}'s {target} production will be {trial}")
+st.success(f"{country}'s {target} production will be {trial} GWh")
