@@ -28,7 +28,11 @@ def save_results(params: dict, metrics: dict) -> None:
 
     print("✅ Results saved locally")
 
+<<<<<<< HEAD
+def save_model(model: keras.Model = None) -> None:
+=======
 def save_model(model) -> None:
+>>>>>>> a5af15a1d3c8793377ee05a03cccea4e5b64855b
     """
     Persist trained model locally on the hard drive at f"{LOCAL_REGISTRY_PATH}/models/{timestamp}.h5"
     - if MODEL_TARGET='gcs', also persist it in your bucket on GCS at "models/{timestamp}.h5"
@@ -37,9 +41,14 @@ def save_model(model) -> None:
     timestamp = time.strftime("%Y%m%d-%H%M%S")
 
     # Save model locally
+<<<<<<< HEAD
+    model_path = os.path.join(LOCAL_REGISTRY_PATH, "models", f"{timestamp}.h5")
+    model.save(model_path)
+=======
     model_path = os.path.join(LOCAL_PATH_PARAMS, 'models', 'saved_models', f"{timestamp}.h5")
     with open(model_path, 'wb') as file:
         pickle.dump(model, file)
+>>>>>>> a5af15a1d3c8793377ee05a03cccea4e5b64855b
 
     if MODEL_TARGET == "gcs":
         model_filename = model_path.split("/")[-1] # e.g. "20230208-161047.h5" for instance
@@ -55,7 +64,11 @@ def save_model(model) -> None:
     return None
 
 
+<<<<<<< HEAD
+def load_model(stage="Production") -> 'model':
+=======
 def load_model():
+>>>>>>> a5af15a1d3c8793377ee05a03cccea4e5b64855b
     """
     Return a saved model:
     - locally (latest one in alphabetical order)
@@ -63,6 +76,8 @@ def load_model():
     Return None (but do not Raise) if no model is found
 
     """
+<<<<<<< HEAD
+=======
 
     if MODEL_TARGET == 'local':
         print(f"Load latest model from local registry.")
@@ -109,3 +124,4 @@ def load_model():
             return None
     else:
         return None
+>>>>>>> a5af15a1d3c8793377ee05a03cccea4e5b64855b
