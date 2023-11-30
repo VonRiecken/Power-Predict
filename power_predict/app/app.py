@@ -3,6 +3,8 @@ import requests
 
 from power_predict.params import COUNTRIES_LIST, PREDICTION_TARGETS
 
+st.title('Power Predict')
+
 country_list = COUNTRIES_LIST
 target_list = PREDICTION_TARGETS
 

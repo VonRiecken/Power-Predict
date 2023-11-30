@@ -20,6 +20,7 @@ app.add_middleware(
 @app.get('/predict')
 def predict(
     country: str,
+    target: str,
     cdd18: float,
     cdd21: float,
     hdd16: float,
@@ -34,7 +35,8 @@ def predict(
     Make prediciton for country renewable electricy production,  given certain weather conditions
     """
 
-    X_pred = pd.DataFrame(locals, index=[0])
+    df = pd.DataFrame(locals, index=[0])
+    X_pred = df.drop(columns=['target'])
 
     X_pred_preprocessed = preprocess_features(X_pred)
 

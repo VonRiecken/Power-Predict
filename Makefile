@@ -9,3 +9,6 @@ app:
 
 sandbox:
 	python sandbox.py
+
+run_api:
+	uvicorn power_predict.api.fastapi:app --reload
