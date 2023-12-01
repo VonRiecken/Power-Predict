@@ -3,7 +3,6 @@
 .ipynb_checkpoints/
 .DS_Store
 
-
 # OS generated files #
 ######################
 *.DS_Store
@@ -31,4 +30,5 @@ mlruns
 
 # Sandboxes
 sandbox.ipynb
+
 sandbox.py

@@ -2,8 +2,8 @@ import pandas as pd
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from power_predict.logic.registry import load_model
-from power_predict.logic.preprocessor import preprocess_features
+# from power_predict.logic.registry import load_model
+# from power_predict.logic.preprocessor import preprocess_features
 
 
 app = FastAPI()
@@ -35,16 +35,19 @@ def predict(
     Make prediciton for country renewable electricy production,  given certain weather conditions
     """
 
-    # df = pd.DataFrame(locals, index=[0])
-    # X_pred = df.drop(columns=['target'])
+    df = pd.DataFrame(locals, index=[0])
+    X_pred = df.drop(columns=['target'])
 
-    # X_pred_preprocessed = preprocess_features(X_pred)
+    X_pred_preprocessed = preprocess_features(X_pred)
 
+<<<<<<< HEAD
+    app.state.model = load_model(stage='Production')
+=======
     app.state.model = load_model()
+>>>>>>> a5af15a1d3c8793377ee05a03cccea4e5b64855b
     y_pred = app.state.model.predict(X_pred_preprocessed)
 
-    # return dict(total_renewable=float(y_pred))
-    return precipitation * temp
+    return dict(total_renewable=float(y_pred))
 
 @app.get('/')
 def root():

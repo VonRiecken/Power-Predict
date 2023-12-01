@@ -1,6 +1,6 @@
 all: install
 
-run_install:
+install:
 	pip install -e .
 	python setup.py install
 
