@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -7,8 +8,7 @@ from google.cloud import bigquery
 import pandas_gbq
 ## from colorama import Fore, Style
 from pathlib import Path
-import os
-
+from power_predict.params import *
 
 
 def clean_production_data(Electricity_Data_Explorer):
@@ -56,7 +56,7 @@ def clean_production_data(Electricity_Data_Explorer):
 
 
 
-def storing_weather_data():
+def creating_weather_data():
 
     root_path = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
     final_path = os.path.join(root_path, "raw_data")
@@ -107,7 +107,7 @@ def cleaning_weather_data():
     electricity_data_explorer = clean_production_data('Electricity_Data_Explorer')
 
     ## We call the dictionary containing the dataframes for the weather data
-    dataframes = storing_weather_data()
+    dataframes = creating_weather_data()
 
     ## Merging CDD_18 and CDD_21
     concat1 = dataframes['CDD_18'].merge(dataframes['CDD_21'][['Country','Month_year', 'value_CDD_21']])
@@ -185,19 +185,19 @@ def cleaning_weather_data():
     return final
 
 
-def upload_data_bq():
+def upload_data_bq(df_to_save, table_id:str):
 
     # We call the cleaned dataframe
-    cleaned_weather_data = cleaning_weather_data()
+    cleaned_weather_data = df_to_save
 
     # Replace these with your own values
-    project_id = 'peppy-aileron-401514'
-    dataset_id = 'Power_Predict'
-    table_id = 'cleaned_data'
-    json_credentials_path = '/Users/sylvainvanhuysse/code/bonawa/gcp/peppy-aileron-401514-167fede484a0.json'  # Replace with the path to your service account JSON key file
+    project_id = PROJECT_ID
+    dataset_id = DATASET_ID
+    # table_id =
+    SYLVAIN_CREDIENTIALS_PATH = SYLVAIN_CREDIENTIALS_PATH   # Replace with the path to your service account JSON key file
 
     # Set up BigQuery client
-    client = bigquery.Client.from_service_account_json(json_credentials_path, project=project_id)
+    client = bigquery.Client.from_service_account_json(SYLVAIN_CREDIENTIALS_PATH, project=project_id)
     ##print('BQ Client is set up')
 
     # Set up table reference
@@ -208,10 +208,14 @@ def upload_data_bq():
     schema = [bigquery.SchemaField(column, cleaned_weather_data[column].dtype.name.lower()) for column in cleaned_weather_data.columns]
 
     # Specifying the type of the column Month_year (necessary for BigQuery)
-    schema = [bigquery.SchemaField('Month_year', 'TIMESTAMP')]
+    if 'Month_year' in df_to_save.columns:
+        schema = [bigquery.SchemaField('Month_year', 'TIMESTAMP')]
 
     # Check if the table exists
     table_exists = False
+
+    if client.get_table(table_ref):
+        table_exists = True
 
     try:
         existing_table = client.get_table(table_ref)
@@ -237,3 +241,17 @@ def upload_data_bq():
     pandas_gbq.to_gbq(cleaned_weather_data, destination_table, project_id=project_id, if_exists='replace')
 
     print(f"✅ DataFrame uploaded to BigQuery table: {destination_table}")
+
+def load_data_bq():
+    # Replace these with your own values
+    project_id = PROJECT_ID
+    dataset_id = DATASET_ID
+    table_id = 'cleaned_data'
+
+    # Query to fetch the data (optional)
+    query = f'SELECT * FROM `{project_id}.{dataset_id}.{table_id}`'
+
+    # Load the DataFrame from BigQuery
+    cleaned_data = pandas_gbq.read_gbq(query, project_id=project_id)
+
+    return cleaned_data
