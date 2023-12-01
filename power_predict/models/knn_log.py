@@ -9,14 +9,13 @@ from sklearn.multioutput import MultiOutputRegressor
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 import matplotlib.pyplot as plt
 import seaborn as sns
+from logic.registry import save_model, save_results
 
 # --- Fetching Data ---
 df = pd.read_csv('/Users/FernandoSandoval/code/VonRiecken/Power-Predict/power_predict/data/merged_dataset2023-11-29 16:33:32.960189.csv')
 df.head(5)
 
 # --- Data Preprocessing ---
-
-# Assuming 'df' is your DataFrame
 
 # Setting Country + Month year as Index
 df['Country_Month'] = df['Country'] + '_' + df['Month_year'].astype(str)
@@ -66,3 +65,7 @@ y_pred = pipeline.predict(X_test)  # X_test will be automatically preprocessed b
 
 # Inverse log transformation of the predictions
 y_pred = np.expm1(y_pred)
+
+save_model(pipeline, 'knn_log')
+
+# save_results(model)
