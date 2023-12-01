@@ -40,6 +40,12 @@ def predict(
 
     # X_pred_preprocessed = preprocess_features(X_pred)
 
+<<<<<<< HEAD
+=======
+    # app.state.model = load_model()
+    # y_pred = app.state.model.predict(X_pred_preprocessed)
+
+>>>>>>> 843a8870693ccc43c778f3a96650a874b3318822
     app.state.model = load_model()
     y_pred = app.state.model.predict(X_pred_preprocessed)
 

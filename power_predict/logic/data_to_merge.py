@@ -8,7 +8,23 @@ from google.cloud import bigquery
 import pandas_gbq
 ## from colorama import Fore, Style
 from pathlib import Path
+<<<<<<< HEAD:power_predict/logic/data_to_merge.py
 from power_predict.params import *
+=======
+import os
+
+import numpy as np
+from sklearn.metrics import mean_squared_error
+from sklearn.metrics import mean_absolute_error
+from sklearn.model_selection import cross_val_score
+from sklearn.linear_model import LogisticRegression
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.preprocessing import MinMaxScaler
+
+>>>>>>> 843a8870693ccc43c778f3a96650a874b3318822:power_predict/logic/data.py
 
 
 def clean_production_data(Electricity_Data_Explorer):
@@ -164,14 +180,14 @@ def cleaning_weather_data():
     final['Month_year'] = pd.to_datetime(final['Month_year'])
 
     ## We're finally going to scale the columns related to the weather data
-    ## Standard Scaler Object
-    scaler = StandardScaler()
+    ## Linear regression model MinMaxScaler(feature_range=(0, 1)). We are dealing with GWh (energy) and prefer to have only positive values
+    model = MinMaxScaler(feature_range=(0, 1))
 
     ## We will only scale the columns containing 'value' in their naming
     to_be_scaled = [col for col in final.columns if 'value' in col]
 
     # Fit and transform only the selected columns
-    final[to_be_scaled] = scaler.fit_transform(final[to_be_scaled])
+    final[to_be_scaled] = model.fit_transform(final[to_be_scaled])
 
     ##os.makedirs(final_path, exist_ok=True) ## We check if the folder power_predict/data exists, if not, we create it
 
@@ -188,6 +204,7 @@ def cleaning_weather_data():
 def upload_data_bq(df_to_save, table_id:str):
 
     # We call the cleaned dataframe
+<<<<<<< HEAD:power_predict/logic/data_to_merge.py
     cleaned_weather_data = df_to_save
 
     # Replace these with your own values
@@ -195,6 +212,16 @@ def upload_data_bq(df_to_save, table_id:str):
     dataset_id = DATASET_ID
     # table_id =
     SYLVAIN_CREDIENTIALS_PATH = SYLVAIN_CREDIENTIALS_PATH   # Replace with the path to your service account JSON key file
+=======
+    ##cleaned_weather_data = df_to_save
+    ##cleaned_weather_data = cleaning_weather_data()
+
+    # Replace these with your own values
+    project_id = 'peppy-aileron-401514'
+    dataset_id = 'Power_Predict'
+    ##table_id = f'{df_to_save}'
+    json_credentials_path = '/Users/sylvainvanhuysse/code/bonawa/gcp/peppy-aileron-401514-167fede484a0.json'  # Replace with the path to your service account JSON key file
+>>>>>>> 843a8870693ccc43c778f3a96650a874b3318822:power_predict/logic/data.py
 
     # Set up BigQuery client
     client = bigquery.Client.from_service_account_json(SYLVAIN_CREDIENTIALS_PATH, project=project_id)
@@ -205,11 +232,12 @@ def upload_data_bq(df_to_save, table_id:str):
     ##print('BQ table reference is set up')
 
     # Create the schema based on DataFrame columns for the BQ table
-    schema = [bigquery.SchemaField(column, cleaned_weather_data[column].dtype.name.lower()) for column in cleaned_weather_data.columns]
+    schema = [bigquery.SchemaField(column, df_to_save[column].dtype.name.lower()) for column in df_to_save.columns]
 
     # Specifying the type of the column Month_year (necessary for BigQuery)
     if 'Month_year' in df_to_save.columns:
         schema = [bigquery.SchemaField('Month_year', 'TIMESTAMP')]
+<<<<<<< HEAD:power_predict/logic/data_to_merge.py
 
     # Check if the table exists
     table_exists = False
@@ -219,13 +247,23 @@ def upload_data_bq(df_to_save, table_id:str):
 
     try:
         existing_table = client.get_table(table_ref)
+=======
+
+    else: pass
+
+    # Check if the table exists
+    ##if client.get_table(table_ref) == True:
+>>>>>>> 843a8870693ccc43c778f3a96650a874b3318822:power_predict/logic/data.py
         ##print(f'Table {table_ref} already exists.')
-        table_exists = True
-    except Exception as e:
-        print('No table was found.')
+        ##table_exists = True
+    ##else:
+       ## table_exists = False
+       ## print('No table was found.')
+
+    ##table_exists = False
 
     # If the table exists, delete it
-    if table_exists:
+    if client.get_table(table_ref):
         client.delete_table(table_ref)
         print(f'✅ Table {table_ref} deleted.')
 
@@ -238,7 +276,7 @@ def upload_data_bq(df_to_save, table_id:str):
     destination_table = f"{project_id}.{dataset_id}.{table_id}"
 
     # Upload DataFrame to BigQuery
-    pandas_gbq.to_gbq(cleaned_weather_data, destination_table, project_id=project_id, if_exists='replace')
+    pandas_gbq.to_gbq(df_to_save, destination_table, project_id=project_id, if_exists='replace')
 
     print(f"✅ DataFrame uploaded to BigQuery table: {destination_table}")
 
