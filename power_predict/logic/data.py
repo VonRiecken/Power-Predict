@@ -240,3 +240,8 @@ def load_data_bq(table_id: str) -> pd.DataFrame:
     cleaned_data = pandas_gbq.read_gbq(query, project_id=project_id)
 
     return cleaned_data
+
+def load_local_df():
+    data_path = os.path.join(os.path.dirname(__file__), '..', 'data', 'merged_dataset.csv')
+    df = pd.read_csv(data_path)
+    return df
