@@ -9,6 +9,17 @@ import pandas_gbq
 from pathlib import Path
 import os
 
+import numpy as np
+from sklearn.metrics import mean_squared_error
+from sklearn.metrics import mean_absolute_error
+from sklearn.model_selection import cross_val_score
+from sklearn.linear_model import LogisticRegression
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.preprocessing import MinMaxScaler
+
 
 
 def clean_production_data(Electricity_Data_Explorer):
@@ -164,14 +175,14 @@ def cleaning_weather_data():
     final['Month_year'] = pd.to_datetime(final['Month_year'])
 
     ## We're finally going to scale the columns related to the weather data
-    ## Standard Scaler Object
-    scaler = StandardScaler()
+    ## Linear regression model MinMaxScaler(feature_range=(0, 1)). We are dealing with GWh (energy) and prefer to have only positive values
+    model = MinMaxScaler(feature_range=(0, 1))
 
     ## We will only scale the columns containing 'value' in their naming
     to_be_scaled = [col for col in final.columns if 'value' in col]
 
     # Fit and transform only the selected columns
-    final[to_be_scaled] = scaler.fit_transform(final[to_be_scaled])
+    final[to_be_scaled] = model.fit_transform(final[to_be_scaled])
 
     ##os.makedirs(final_path, exist_ok=True) ## We check if the folder power_predict/data exists, if not, we create it
 
