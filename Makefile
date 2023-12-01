@@ -1,15 +1,14 @@
 all: install
 
-install:
-=======
+run_install:
 	pip install -e .
 	python setup.py install
 
-app:
+run_app:
 	streamlit run power_predict/app/app.py
 =======
 
-sandbox:
+run_sandbox:
 	python sandbox.py
 =======
 
