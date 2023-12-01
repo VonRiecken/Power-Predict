@@ -11,3 +11,8 @@ scikit-learn
 requests
 streamlit
 tpot
+uvicorn
+fastapi
+docker
+bigquery
+pandas_gbq
