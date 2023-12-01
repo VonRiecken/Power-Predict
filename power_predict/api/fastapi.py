@@ -35,7 +35,7 @@ def predict(
     Make prediciton for country renewable electricy production,  given certain weather conditions
     """
 
-    # df = pd.DataFrame(locals, index=[0])
+    df = pd.DataFrame(locals, index=[0])
     # X_pred = df.drop(columns=['target'])
 
     # X_pred_preprocessed = preprocess_features(X_pred)
