@@ -24,6 +24,9 @@ from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.preprocessing import MinMaxScaler
 
+<<<<<<< HEAD:power_predict/logic/data_to_merge.py
+>>>>>>> 843a8870693ccc43c778f3a96650a874b3318822:power_predict/logic/data.py
+=======
 >>>>>>> 843a8870693ccc43c778f3a96650a874b3318822:power_predict/logic/data.py
 
 
@@ -205,6 +208,7 @@ def upload_data_bq(df_to_save, table_id:str):
 
     # We call the cleaned dataframe
 <<<<<<< HEAD:power_predict/logic/data_to_merge.py
+<<<<<<< HEAD:power_predict/logic/data_to_merge.py
     cleaned_weather_data = df_to_save
 
     # Replace these with your own values
@@ -213,6 +217,8 @@ def upload_data_bq(df_to_save, table_id:str):
     # table_id =
     SYLVAIN_CREDIENTIALS_PATH = SYLVAIN_CREDIENTIALS_PATH   # Replace with the path to your service account JSON key file
 =======
+=======
+>>>>>>> 843a8870693ccc43c778f3a96650a874b3318822:power_predict/logic/data.py
     ##cleaned_weather_data = df_to_save
     ##cleaned_weather_data = cleaning_weather_data()
 
@@ -238,6 +244,7 @@ def upload_data_bq(df_to_save, table_id:str):
     if 'Month_year' in df_to_save.columns:
         schema = [bigquery.SchemaField('Month_year', 'TIMESTAMP')]
 <<<<<<< HEAD:power_predict/logic/data_to_merge.py
+<<<<<<< HEAD:power_predict/logic/data_to_merge.py
 
     # Check if the table exists
     table_exists = False
@@ -247,6 +254,13 @@ def upload_data_bq(df_to_save, table_id:str):
 
     try:
         existing_table = client.get_table(table_ref)
+=======
+
+    else: pass
+
+    # Check if the table exists
+    ##if client.get_table(table_ref) == True:
+>>>>>>> 843a8870693ccc43c778f3a96650a874b3318822:power_predict/logic/data.py
 =======
 
     else: pass
