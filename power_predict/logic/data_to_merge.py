@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -7,6 +8,9 @@ from google.cloud import bigquery
 import pandas_gbq
 ## from colorama import Fore, Style
 from pathlib import Path
+<<<<<<< HEAD:power_predict/logic/data_to_merge.py
+from power_predict.params import *
+=======
 import os
 
 import numpy as np
@@ -20,6 +24,10 @@ from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.preprocessing import MinMaxScaler
 
+<<<<<<< HEAD:power_predict/logic/data_to_merge.py
+>>>>>>> 843a8870693ccc43c778f3a96650a874b3318822:power_predict/logic/data.py
+=======
+>>>>>>> 843a8870693ccc43c778f3a96650a874b3318822:power_predict/logic/data.py
 
 
 def clean_production_data(Electricity_Data_Explorer):
@@ -67,7 +75,7 @@ def clean_production_data(Electricity_Data_Explorer):
 
 
 
-def storing_weather_data():
+def creating_weather_data():
 
     root_path = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
     final_path = os.path.join(root_path, "raw_data")
@@ -118,7 +126,7 @@ def cleaning_weather_data():
     electricity_data_explorer = clean_production_data('Electricity_Data_Explorer')
 
     ## We call the dictionary containing the dataframes for the weather data
-    dataframes = storing_weather_data()
+    dataframes = creating_weather_data()
 
     ## Merging CDD_18 and CDD_21
     concat1 = dataframes['CDD_18'].merge(dataframes['CDD_21'][['Country','Month_year', 'value_CDD_21']])
@@ -199,6 +207,18 @@ def cleaning_weather_data():
 def upload_data_bq(df_to_save, table_id:str):
 
     # We call the cleaned dataframe
+<<<<<<< HEAD:power_predict/logic/data_to_merge.py
+<<<<<<< HEAD:power_predict/logic/data_to_merge.py
+    cleaned_weather_data = df_to_save
+
+    # Replace these with your own values
+    project_id = PROJECT_ID
+    dataset_id = DATASET_ID
+    # table_id =
+    SYLVAIN_CREDIENTIALS_PATH = SYLVAIN_CREDIENTIALS_PATH   # Replace with the path to your service account JSON key file
+=======
+=======
+>>>>>>> 843a8870693ccc43c778f3a96650a874b3318822:power_predict/logic/data.py
     ##cleaned_weather_data = df_to_save
     ##cleaned_weather_data = cleaning_weather_data()
 
@@ -207,9 +227,10 @@ def upload_data_bq(df_to_save, table_id:str):
     dataset_id = 'Power_Predict'
     ##table_id = f'{df_to_save}'
     json_credentials_path = '/Users/sylvainvanhuysse/code/bonawa/gcp/peppy-aileron-401514-167fede484a0.json'  # Replace with the path to your service account JSON key file
+>>>>>>> 843a8870693ccc43c778f3a96650a874b3318822:power_predict/logic/data.py
 
     # Set up BigQuery client
-    client = bigquery.Client.from_service_account_json(json_credentials_path, project=project_id)
+    client = bigquery.Client.from_service_account_json(SYLVAIN_CREDIENTIALS_PATH, project=project_id)
     ##print('BQ Client is set up')
 
     # Set up table reference
@@ -222,11 +243,31 @@ def upload_data_bq(df_to_save, table_id:str):
     # Specifying the type of the column Month_year (necessary for BigQuery)
     if 'Month_year' in df_to_save.columns:
         schema = [bigquery.SchemaField('Month_year', 'TIMESTAMP')]
+<<<<<<< HEAD:power_predict/logic/data_to_merge.py
+<<<<<<< HEAD:power_predict/logic/data_to_merge.py
+
+    # Check if the table exists
+    table_exists = False
+
+    if client.get_table(table_ref):
+        table_exists = True
+
+    try:
+        existing_table = client.get_table(table_ref)
+=======
 
     else: pass
 
     # Check if the table exists
     ##if client.get_table(table_ref) == True:
+>>>>>>> 843a8870693ccc43c778f3a96650a874b3318822:power_predict/logic/data.py
+=======
+
+    else: pass
+
+    # Check if the table exists
+    ##if client.get_table(table_ref) == True:
+>>>>>>> 843a8870693ccc43c778f3a96650a874b3318822:power_predict/logic/data.py
         ##print(f'Table {table_ref} already exists.')
         ##table_exists = True
     ##else:
@@ -252,3 +293,17 @@ def upload_data_bq(df_to_save, table_id:str):
     pandas_gbq.to_gbq(df_to_save, destination_table, project_id=project_id, if_exists='replace')
 
     print(f"✅ DataFrame uploaded to BigQuery table: {destination_table}")
+
+def load_data_bq():
+    # Replace these with your own values
+    project_id = PROJECT_ID
+    dataset_id = DATASET_ID
+    table_id = 'cleaned_data'
+
+    # Query to fetch the data (optional)
+    query = f'SELECT * FROM `{project_id}.{dataset_id}.{table_id}`'
+
+    # Load the DataFrame from BigQuery
+    cleaned_data = pandas_gbq.read_gbq(query, project_id=project_id)
+
+    return cleaned_data

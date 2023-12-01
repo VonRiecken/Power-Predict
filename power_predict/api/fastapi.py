@@ -43,9 +43,6 @@ def predict(
     # app.state.model = load_model()
     # y_pred = app.state.model.predict(X_pred_preprocessed)
 
-    app.state.model = load_model()
-    y_pred = app.state.model.predict(X_pred_preprocessed)
-
     # return dict(total_renewable=float(y_pred))
     return precipitation * temp
 
