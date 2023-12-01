@@ -24,7 +24,10 @@ LOCAL_REGISTRY_PATH =  os.path.join(os.path.expanduser('~'), ".lewagon", "final_
 LOCAL_PATH_PARAMS = os.path.dirname(os.path.abspath(__file__))
 
 SERVICE_URL = os.environ.get("SERVICE_URL")
+<<<<<<< HEAD
 
+=======
+>>>>>>> 843a8870693ccc43c778f3a96650a874b3318822
 
 PREDICTION_TARGETS = ['Solar', 'Wind', 'Hydro', 'Total']
 COUNTRIES_LIST = ['Argentina', 'Australia', 'Austria', 'Belgium', 'Brazil', 'Bulgaria', 'Canada', 'Chile', 'Colombia',
