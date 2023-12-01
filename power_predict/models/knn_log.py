@@ -9,7 +9,7 @@ from sklearn.multioutput import MultiOutputRegressor
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 import matplotlib.pyplot as plt
 import seaborn as sns
-from logic.registry import save_model, save_results
+from power_predict.logic.registry import save_model#, save_results
 
 # --- Fetching Data ---
 df = pd.read_csv('/Users/FernandoSandoval/code/VonRiecken/Power-Predict/power_predict/data/merged_dataset2023-11-29 16:33:32.960189.csv')
