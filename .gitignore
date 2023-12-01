@@ -1,8 +1,8 @@
 .env
 .env.yaml
+
 .ipynb_checkpoints/
 .DS_Store
-
 
 # OS generated files #
 ######################

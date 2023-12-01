@@ -3,17 +3,17 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from datetime import datetime
 
-from google.cloud import bigquery
-import pandas_gbq
+##from google.cloud import bigquery
 ## from colorama import Fore, Style
 from pathlib import Path
 import os
 
 
+##class Cleaning:
 
 def clean_production_data(Electricity_Data_Explorer):
 
-    root_path = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+    root_path = os.path.dirname(os.path.dirname(__file__))
     final_path = os.path.join(root_path, "raw_data")
 
     electricity_data_explorer = pd.read_csv(os.path.join(final_path, f'{Electricity_Data_Explorer}.csv')) ## We create a DF from the file
@@ -58,7 +58,7 @@ def clean_production_data(Electricity_Data_Explorer):
 
 def storing_weather_data():
 
-    root_path = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+    root_path = os.path.dirname(os.path.dirname(__file__))
     final_path = os.path.join(root_path, "raw_data")
 
     list_dir = os.listdir(final_path)
@@ -96,12 +96,12 @@ def storing_weather_data():
 
         dataframes[name_df] = DataFrame
 
-    print("✅ Dictionary with weather data has been prepared!")
-
     return dataframes
 
 
+
 def cleaning_weather_data():
+
 
     ## We call the dataframe containing the production data
     electricity_data_explorer = clean_production_data('Electricity_Data_Explorer')
@@ -149,91 +149,93 @@ def cleaning_weather_data():
                                                                             'value_Total_Precipitation']])
 
     ## We add a column for the total production of wind, solar, hydro (GWh)
-    final['total_sol_wind_hyd'] = final['Wind'] + final['Solar'] + final['Hydro']
-
-    # replace white spaces by underscores
-    final.columns = [c.replace(' ', '_') for c in final]
-    # replace "," by underscores
-    final.columns = [c.replace(',', '_') for c in final]
-    # replace "(" by underscores
-    final.columns = [c.replace('(', '_') for c in final]
-    # replace ")" by underscores
-    final.columns = [c.replace(')', '_') for c in final]
-
-    ## Specifying the data type 'datetime' of the Month_year column (needed to upload to BigQuery)
-    final['Month_year'] = pd.to_datetime(final['Month_year'])
-
-    ## We're finally going to scale the columns related to the weather data
-    ## Standard Scaler Object
-    scaler = StandardScaler()
-
-    ## We will only scale the columns containing 'value' in their naming
-    to_be_scaled = [col for col in final.columns if 'value' in col]
-
-    # Fit and transform only the selected columns
-    final[to_be_scaled] = scaler.fit_transform(final[to_be_scaled])
+    final['total target (wind, solar, hydro)'] = final['Wind'] + final['Solar'] + final['Hydro']
 
     ##os.makedirs(final_path, exist_ok=True) ## We check if the folder power_predict/data exists, if not, we create it
 
-    root_path = root_path = os.path.dirname(os.path.dirname(os.path.dirname(__file__))) ## We call the path of the current folder
+    root_path = os.path.dirname(os.path.dirname(__file__)) ## We call the path of the current folder
     final_path = os.path.join(root_path, "power_predict/data") ## We place ourlseves in the folder power_predict/data
 
     final.to_csv(f'{final_path}/merged_dataset{datetime.now()}.csv') ## We export the dataframe as csv and store it in power_predict/data and we put the timestamp at the end of the file's name
 
-    print(f"✅ The merged_dataset{datetime.now()}.csv has been exported!")
 
     return final
 
 
-def upload_data_bq():
+def get_data_with_cache(
+        gcp_project:str,
+        query:str,
+        cache_path:Path,
+        data_has_header=True
+    ) -> pd.DataFrame:
+    """
+    Retrieve `query` data from BigQuery, or from `cache_path` if the file exists
+    Store at `cache_path` if retrieved from BigQuery for future use
+    """
+    if cache_path.is_file():
+        print(Fore.BLUE + "\nLoad data from local CSV..." + Style.RESET_ALL)
+        df = pd.read_csv(cache_path, header='infer' if data_has_header else None)
+    else:
+        print(Fore.BLUE + "\nLoad data from BigQuery server..." + Style.RESET_ALL)
+        client = bigquery.Client(project=gcp_project)
+        query_job = client.query(query)
+        result = query_job.result()
+        df = result.to_dataframe()
 
-    # We call the cleaned dataframe
-    cleaned_weather_data = cleaning_weather_data()
+        # Store as CSV if the BQ query returned at least one valid line
+        if df.shape[0] > 1:
+            df.to_csv(cache_path, header=data_has_header, index=False)
 
-    # Replace these with your own values
-    project_id = 'peppy-aileron-401514'
-    dataset_id = 'Power_Predict'
-    table_id = 'cleaned_data'
-    json_credentials_path = '/Users/sylvainvanhuysse/code/bonawa/gcp/peppy-aileron-401514-167fede484a0.json'  # Replace with the path to your service account JSON key file
+    print(f"✅ Data loaded, with shape {df.shape}")
 
-    # Set up BigQuery client
-    client = bigquery.Client.from_service_account_json(json_credentials_path, project=project_id)
-    ##print('BQ Client is set up')
+    return df
 
-    # Set up table reference
-    table_ref = client.dataset(dataset_id).table(table_id)
-    ##print('BQ table reference is set up')
+def load_data_to_bq(
+        data: pd.DataFrame,
+        gcp_project:str,
+        bq_dataset:str,
+        table: str,
+        truncate: bool
+    ) -> None:
+    """
+    - Save the DataFrame to BigQuery
+    - Empty the table beforehand if `truncate` is True, append otherwise
+    """
 
-    # Create the schema based on DataFrame columns for the BQ table
-    schema = [bigquery.SchemaField(column, cleaned_weather_data[column].dtype.name.lower()) for column in cleaned_weather_data.columns]
+    assert isinstance(data, pd.DataFrame)
+    full_table_name = f"{gcp_project}.{bq_dataset}.{table}"
+    print(Fore.BLUE + f"\nSave data to BigQuery @ {full_table_name}...:" + Style.RESET_ALL)
 
-    # Specifying the type of the column Month_year (necessary for BigQuery)
-    schema = [bigquery.SchemaField('Month_year', 'TIMESTAMP')]
+    # Load data onto full_table_name
 
-    # Check if the table exists
-    table_exists = False
+    # 🎯 HINT for "*** TypeError: expected bytes, int found":
+    # After preprocessing the data, your original column names are gone (print it to check),
+    # so ensure that your column names are *strings* that start with either
+    # a *letter* or an *underscore*, as BQ does not accept anything else
 
-    try:
-        existing_table = client.get_table(table_ref)
-        ##print(f'Table {table_ref} already exists.')
-        table_exists = True
-    except Exception as e:
-        print('No table was found.')
+    # TODO: simplify this solution if possible, but students may very well choose another way to do it
+    # We don't test directly against their own BQ tables, but only the result of their query
+    data.columns = [f"_{column}" if not str(column)[0].isalpha() and not str(column)[0] == "_" else str(column) for column in data.columns]
 
-    # If the table exists, delete it
-    if table_exists:
-        client.delete_table(table_ref)
-        print(f'✅ Table {table_ref} deleted.')
+    client = bigquery.Client()
 
-    # Create the BigQuery table with the dynamically generated schema
-    table = bigquery.Table(table_ref, schema=schema)
-    table = client.create_table(table)
-    print(f'✅ Table {table_ref} created.')
+    # Define write mode and schema
+    write_mode = "WRITE_TRUNCATE" if truncate else "WRITE_APPEND"
+    job_config = bigquery.LoadJobConfig(write_disposition=write_mode)
 
-    # Set up the destination table
-    destination_table = f"{project_id}.{dataset_id}.{table_id}"
+    print(f"\n{'Write' if truncate else 'Append'} {full_table_name} ({data.shape[0]} rows)")
 
-    # Upload DataFrame to BigQuery
-    pandas_gbq.to_gbq(cleaned_weather_data, destination_table, project_id=project_id, if_exists='replace')
+    # Load data
+    job = client.load_table_from_dataframe(data, full_table_name, job_config=job_config)
+    result = job.result()  # wait for the job to complete
 
-    print(f"✅ DataFrame uploaded to BigQuery table: {destination_table}")
+    print(f"✅ Data saved to bigquery, with shape {data.shape}")
+
+
+if __name__ == '__main__':
+    print(os.path.dirname(os.path.dirname(__file__)))
+
+    root_path = os.path.dirname(os.path.dirname(__file__))
+    print(os.path.join(root_path, "raw_data"))
+
+    clean_production_data('Electricity_Data_Explorer')
