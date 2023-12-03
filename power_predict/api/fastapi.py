@@ -21,10 +21,6 @@ app.add_middleware(
 def predict(
     country: str,
     target: str,
-    cdd18: float,
-    cdd21: float,
-    hdd16: float,
-    hdd18: float,
     temp: float,
     humidity: float,
     heat_index: float,
@@ -36,7 +32,7 @@ def predict(
     """
 
     df = pd.DataFrame(locals, index=[0])
-    # X_pred = df.drop(columns=['target'])
+    X_pred = df.drop(columns=['target'])
 
     # X_pred_preprocessed = preprocess_features(X_pred)
 

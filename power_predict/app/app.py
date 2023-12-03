@@ -23,11 +23,11 @@ precipitation = st.number_input('Total precipitaiton', format='%.4f')
 
 params_ = {
     "Country": country,
-    "value_CDD_18": cdd_18,
-    "value_CDD_21": cdd_21,
+    # "value_CDD_18": cdd_18,
+    # "value_CDD_21": cdd_21,
     "value_Global_Horizontal_Irrandiance": irradiance,
-    "value_HDD_16": hdd_16,
-    "value_HDD_18": hdd_18,
+    # "value_HDD_16": hdd_16,
+    # "value_HDD_18": hdd_18,
     "value_Heat_index": heat_index,
     "value_Relative_Humidty": humidity,
     "value_Temperature": temp,

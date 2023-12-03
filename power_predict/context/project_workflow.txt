@@ -1,4 +1,3 @@
-'''
 
 if not load_data(either local or cloud):
     create dataset from raw data
@@ -45,6 +44,3 @@ optional_api:
     - process X
     - model.predict(X)
     - return dict('matching_target_name': prediction)
-
-
-'''

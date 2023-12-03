@@ -16,3 +16,4 @@ fastapi
 docker
 bigquery
 pandas_gbq
+google-cloud
