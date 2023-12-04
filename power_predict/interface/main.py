@@ -1,50 +1,17 @@
-'''
+from power_predict.logic.registry import load_model
+from power_predict.params import PREDICTION_TARGETS
 
-if not load_data(either local or cloud):
-    create dataset from raw data
-    save data local/cloud
+def load_target_model(target:str = None):
+    if target not in PREDICTION_TARGETS:
+        return 'Target not in scope'
 
-if not load_model(selected_model):
-    load_data(either local or cloud)
-    train_test_split
-    y log_transform
-    preprocess data (one hot encoder and scale)
-    select model
-    train and eval model
-    grid search model for best score
-    save best_performing_model
+    if target == 'Solar':
+        model = load_model('test_john')
+    elif target == 'Hydro':
+        model = load_model('best_hydro_model')
+    elif target == 'Wind':
+        model = load_model('best_wind_model')
+    else:
+        model = load_model('best_total_model')
 
-else:
-    model = load_model(selected_model)
-
-
-api:
-    from user:
-    - give target
-    - give X, incl. country (option for minimal features/all features)
-
-    image needs to:
-    - retrieve model for specific target (solar, wind, hydro, total)
-    - load model
-    - process X
-    - model.predict(X)
-    - return dict('matching_target_name': prediction)
-
-optional_api:
-    from user:
-    - give target
-    - give date range
-
-    image needs to:
-    - send api call to weather url for days between specified dates
-    - parse through requested jsons to extract X_feature values
-    - depending on format of weather api -> calculate monthly equivalent for features
-        * for trial, one or two days could be considered representative of a month?
-    - retrieve model for specific target (solar, wind, hydro, total)
-    - load model
-    - process X
-    - model.predict(X)
-    - return dict('matching_target_name': prediction)
-
-
-'''
+    return model

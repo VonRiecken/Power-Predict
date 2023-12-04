@@ -44,3 +44,8 @@ optional_api:
     - process X
     - model.predict(X)
     - return dict('matching_target_name': prediction)
+
+
+
+optimising models:
+- cardinality of countries - look into categorising countries (i.e. northern europe, s.e. asia, etc.) - more data per 'country'

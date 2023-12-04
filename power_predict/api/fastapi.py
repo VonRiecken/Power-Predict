@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from power_predict.logic.registry import load_model
 from power_predict.logic.preprocessor import preprocess_features
+from power_predict.interface.main import *
 
 
 app = FastAPI()
@@ -25,19 +26,23 @@ def predict(
     humidity: float,
     heat_index: float,
     irradiance: float,
-    precipitation: float
+    precipitation: float,
+    cdd_18: float = None,
+    cdd_21: float = None,
+    hdd_16: float = None,
+    hdd_18:float = None
 ):
     """
     Make prediciton for country renewable electricy production,  given certain weather conditions
     """
+# call unclean stuff from main
 
     df = pd.DataFrame(locals, index=[0])
     X_pred = df.drop(columns=['target'])
+    X_pred_preprocessed = preprocess_features(X_pred)
 
-    # X_pred_preprocessed = preprocess_features(X_pred)
-
-    # app.state.model = load_model()
-    # y_pred = app.state.model.predict(X_pred_preprocessed)
+    model = load_target_model(target)
+    # y_pred_spec_model = app.state.model.predict(X_pred_preprocessed)
 
     # return dict(total_renewable=float(y_pred))
     return precipitation * temp
