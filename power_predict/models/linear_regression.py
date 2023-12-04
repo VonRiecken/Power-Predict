@@ -19,11 +19,11 @@ if not columns_X:
 
 X = final[columns_X]
 columns_to_drop = ['value_CDD_18',
-                   'value_CDD_21',
-                   'value_HDD_16',
-                   'value_HDD_18',
-                   'value_Heat_index'
-                   ]
+                'value_CDD_21',
+                'value_HDD_16',
+                'value_HDD_18',
+                'value_Heat_index'
+                ]
 X = X.drop(columns=columns_to_drop)
 
 # Feature scaling
