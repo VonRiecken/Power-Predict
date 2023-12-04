@@ -17,3 +17,5 @@ docker
 bigquery
 pandas_gbq
 google-cloud-storage
+google-cloud
+google
