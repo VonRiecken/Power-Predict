@@ -26,11 +26,7 @@ def predict(
     humidity: float,
     heat_index: float,
     irradiance: float,
-    precipitation: float,
-    cdd_18: float = None,
-    cdd_21: float = None,
-    hdd_16: float = None,
-    hdd_18:float = None
+    precipitation: float
 ):
     """
     Make prediciton for country renewable electricy production,  given certain weather conditions
