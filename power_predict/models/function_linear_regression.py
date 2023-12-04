@@ -4,6 +4,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import StandardScaler
 from power_predict.logic.data import load_local_df
+#from sklearn.externals import joblib
 
 
 
@@ -59,4 +60,12 @@ def run_linear_regression_model():
 
 #save_model(run_linear_regression_model, 'Linear Regression')
 
+#def save_model(model, model_type):
+    model_filename = f'{model_type}_model.joblib'
+    joblib.dump(model, model_filename)
+    print(f'Model saved as: {model_filename}')
+
+# Run the linear regression model and save it
+#linear_regression_model = run_linear_regression_model()
+#save_model(linear_regression_model, 'Linear Regression')
 run_linear_regression_model()
