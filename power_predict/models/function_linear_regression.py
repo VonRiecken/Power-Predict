@@ -5,6 +5,8 @@ from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import StandardScaler
 from power_predict.logic.data import load_local_df
 
+
+
 def run_linear_regression_model():
     df = load_local_df()
 
@@ -24,9 +26,9 @@ def run_linear_regression_model():
     X_scaled = scaler.fit_transform(X)
 
     # Here you can choose which technology output to predict
-    y = final['total_sol_wind_hyd']
-    # y = final['Solar']
-    # y = final['Wind']
+    #y = final['total_sol_wind_hyd']
+    #y = final['Solar']
+    y = final['Wind']
     # y = final['Hydro']
 
     # Split training and testing sets
@@ -52,5 +54,9 @@ def run_linear_regression_model():
     print(f'Mean Squared Error: {mse}')
     print(f'Coefficient of Determination (COD): {cod}')
     print(f'R-squared: {r2}')
+
+    return model
+
+#save_model(run_linear_regression_model, 'Linear Regression')
 
 run_linear_regression_model()
