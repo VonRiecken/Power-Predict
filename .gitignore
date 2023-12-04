@@ -1,4 +1,5 @@
 .env
+.venv/
 .env.yaml
 .ipynb_checkpoints/
 .DS_Store
