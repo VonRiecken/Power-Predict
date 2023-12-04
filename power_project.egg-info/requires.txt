@@ -10,10 +10,5 @@ seaborn
 scikit-learn
 requests
 streamlit
-tpot
-uvicorn
-fastapi
-docker
-bigquery
-pandas_gbq
 google-cloud
+google-cloud-storage

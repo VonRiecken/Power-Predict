@@ -1,6 +1,5 @@
 .env
-=======
-=======
+.env.yaml
 .ipynb_checkpoints/
 .DS_Store
 
@@ -31,8 +30,4 @@ mlruns
 
 # Sandboxes
 sandbox.ipynb
-
-sandbox.py
-=======
-=======
 sandbox.py

@@ -2,30 +2,28 @@ import os
 import numpy as np
 
 ##################  VARIABLES  ##################
-<<<<<<< HEAD
-# MODEL_TARGET = os.environ.get("MODEL_TARGET")
-=======
 MODEL_TARGET = os.environ.get("MODEL_TARGET")
->>>>>>> a5af15a1d3c8793377ee05a03cccea4e5b64855b
 # GCP_PROJECT = os.environ.get("GCP_PROJECT")
 # GCP_REGION = os.environ.get("GCP_REGION")
-# BQ_DATASET = os.environ.get("BQ_DATASET")
-# BQ_REGION = os.environ.get("BQ_REGION")
+BQ_DATASET = os.environ.get("BQ_DATASET")
+BQ_REGION = os.environ.get("BQ_REGION")
+PROJECT_ID = os.environ.get("PROJECT_ID")
+DATASET_ID = os.environ.get("DATASET_ID")
+SYLVAIN_CREDIENTIALS_PATH = os.environ.get("SYLVAIN_CREDIENTIALS_PATH")
 # BUCKET_NAME = os.environ.get("BUCKET_NAME")
 # INSTANCE = os.environ.get("INSTANCE")
 
-# GAR_IMAGE = os.environ.get("GAR_IMAGE")
-# GAR_MEMORY = os.environ.get("GAR_MEMORY")
+GAR_IMAGE = os.environ.get("GAR_IMAGE")
+GAR_MEMORY = os.environ.get("GAR_MEMORY")
+
+GOOGLE_APPLICATION_CREDENTIALS = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
 
 ##################  CONSTANTS  #####################
 LOCAL_DATA_PATH = os.path.join(os.path.expanduser('~'), ".lewagon", "final_project", "data")
 LOCAL_REGISTRY_PATH =  os.path.join(os.path.expanduser('~'), ".lewagon", "final_project", "training_outputs")
-<<<<<<< HEAD
-=======
 LOCAL_PATH_PARAMS = os.path.dirname(os.path.abspath(__file__))
 
->>>>>>> a5af15a1d3c8793377ee05a03cccea4e5b64855b
-
+SERVICE_URL = os.environ.get("SERVICE_URL")
 PREDICTION_TARGETS = ['Solar', 'Wind', 'Hydro', 'Total']
 COUNTRIES_LIST = ['Argentina', 'Australia', 'Austria', 'Belgium', 'Brazil', 'Bulgaria', 'Canada', 'Chile', 'Colombia',
                   'Costa Rica', 'Croatia', 'Cyprus', 'Czech Republic', 'Denmark', 'Estonia', 'Finland', 'France', 'Germany',

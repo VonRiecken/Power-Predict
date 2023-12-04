@@ -1,3 +1,5 @@
+import os
+import glob
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -7,8 +9,8 @@ from google.cloud import bigquery
 import pandas_gbq
 ## from colorama import Fore, Style
 from pathlib import Path
-import os
-
+from power_predict.params import *
+# from sklearn.preprocessing import MinMaxScaler
 
 
 def clean_production_data(Electricity_Data_Explorer):
@@ -56,7 +58,7 @@ def clean_production_data(Electricity_Data_Explorer):
 
 
 
-def storing_weather_data():
+def creating_weather_data():
 
     root_path = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
     final_path = os.path.join(root_path, "raw_data")
@@ -101,13 +103,13 @@ def storing_weather_data():
     return dataframes
 
 
-def cleaning_weather_data():
+def merging_all_datasets():
 
     ## We call the dataframe containing the production data
     electricity_data_explorer = clean_production_data('Electricity_Data_Explorer')
 
     ## We call the dictionary containing the dataframes for the weather data
-    dataframes = storing_weather_data()
+    dataframes = creating_weather_data()
 
     ## Merging CDD_18 and CDD_21
     concat1 = dataframes['CDD_18'].merge(dataframes['CDD_21'][['Country','Month_year', 'value_CDD_21']])
@@ -163,41 +165,46 @@ def cleaning_weather_data():
     ## Specifying the data type 'datetime' of the Month_year column (needed to upload to BigQuery)
     final['Month_year'] = pd.to_datetime(final['Month_year'])
 
-    ## We're finally going to scale the columns related to the weather data
-    ## Standard Scaler Object
-    scaler = StandardScaler()
+    # removing scaling from this function - implement in preprocessing function
+    # --> new data (i.e. X_pred) can be processed in the same way
+            # ## We're finally going to scale the columns related to the weather data
+            # ## Min-Max Scaler Object
+            # scaler = MinMaxScaler(feature_range=(0, 1))
 
-    ## We will only scale the columns containing 'value' in their naming
-    to_be_scaled = [col for col in final.columns if 'value' in col]
+            # ## We will only scale the columns containing 'value' in their naming
+            # to_be_scaled = [col for col in final.columns if 'value' in col]
 
-    # Fit and transform only the selected columns
-    final[to_be_scaled] = scaler.fit_transform(final[to_be_scaled])
-
-    ##os.makedirs(final_path, exist_ok=True) ## We check if the folder power_predict/data exists, if not, we create it
-
-    root_path = root_path = os.path.dirname(os.path.dirname(os.path.dirname(__file__))) ## We call the path of the current folder
-    final_path = os.path.join(root_path, "power_predict/data") ## We place ourlseves in the folder power_predict/data
-
-    final.to_csv(f'{final_path}/merged_dataset{datetime.now()}.csv') ## We export the dataframe as csv and store it in power_predict/data and we put the timestamp at the end of the file's name
-
-    print(f"✅ The merged_dataset{datetime.now()}.csv has been exported!")
-
+            # # Fit and transform only the selected columns
+            # final[to_be_scaled] = scaler.fit_transform(final[to_be_scaled])
     return final
 
 
-def upload_data_bq():
+def save_dataset_locally(df_to_save: pd.DataFrame, dataset_name: str) -> None:
+    """
+    Save a dataset locally with a name and timestamp
+    """
+    ##os.makedirs(final_path, exist_ok=True) ## We check if the folder power_predict/data exists, if not, we create it
 
-    # We call the cleaned dataframe
-    cleaned_weather_data = cleaning_weather_data()
+    root_path = os.path.dirname(os.path.dirname(__file__)) ## We call the path of the current folder
+    final_path = os.path.join(root_path, "data/") ## We place ourlseves in the folder power_predict/data
 
-    # Replace these with your own values
-    project_id = 'peppy-aileron-401514'
-    dataset_id = 'Power_Predict'
-    table_id = 'cleaned_data'
-    json_credentials_path = '/Users/sylvainvanhuysse/code/bonawa/gcp/peppy-aileron-401514-167fede484a0.json'  # Replace with the path to your service account JSON key file
+    df_to_save.to_csv(f'{final_path}/{dataset_name}{datetime.now()}.csv') ## We export the dataframe as csv and store it in power_predict/data and we put the timestamp at the end of the file's name
+
+    print(f"✅ The {dataset_name}{datetime.now()}.csv has been exported!")
+
+    return None
+
+
+def upload_data_bq(df_to_save, table_id:str):
+
+    # Calling your own values - make sure the .env has Sylvain's details
+    project_id = PROJECT_ID
+    dataset_id = DATASET_ID
+    # table_id =
+    google_credentials_path = GOOGLE_APPLICATION_CREDENTIALS   # Replace with the path to your service account JSON key file
 
     # Set up BigQuery client
-    client = bigquery.Client.from_service_account_json(json_credentials_path, project=project_id)
+    client = bigquery.Client.from_service_account_json(google_credentials_path, project=project_id)
     ##print('BQ Client is set up')
 
     # Set up table reference
@@ -205,23 +212,14 @@ def upload_data_bq():
     ##print('BQ table reference is set up')
 
     # Create the schema based on DataFrame columns for the BQ table
-    schema = [bigquery.SchemaField(column, cleaned_weather_data[column].dtype.name.lower()) for column in cleaned_weather_data.columns]
+    schema = [bigquery.SchemaField(column, df_to_save[column].dtype.name.lower()) for column in df_to_save.columns]
 
     # Specifying the type of the column Month_year (necessary for BigQuery)
-    schema = [bigquery.SchemaField('Month_year', 'TIMESTAMP')]
-
-    # Check if the table exists
-    table_exists = False
-
-    try:
-        existing_table = client.get_table(table_ref)
-        ##print(f'Table {table_ref} already exists.')
-        table_exists = True
-    except Exception as e:
-        print('No table was found.')
+    if 'Month_year' in df_to_save.columns:
+        schema = [bigquery.SchemaField('Month_year', 'TIMESTAMP')]
 
     # If the table exists, delete it
-    if table_exists:
+    if client.get_table(table_ref):
         client.delete_table(table_ref)
         print(f'✅ Table {table_ref} deleted.')
 
@@ -234,6 +232,39 @@ def upload_data_bq():
     destination_table = f"{project_id}.{dataset_id}.{table_id}"
 
     # Upload DataFrame to BigQuery
-    pandas_gbq.to_gbq(cleaned_weather_data, destination_table, project_id=project_id, if_exists='replace')
+    pandas_gbq.to_gbq(df_to_save, destination_table, project_id=project_id, if_exists='replace')
 
     print(f"✅ DataFrame uploaded to BigQuery table: {destination_table}")
+
+def load_data_bq(table_id: str) -> pd.DataFrame:
+    # Replace these with your own values
+    project_id = PROJECT_ID
+    dataset_id = DATASET_ID
+    # table_id = 'cleaned_data'
+
+    # Query to fetch the data (optional)
+    query = f'SELECT * FROM `{project_id}.{dataset_id}.{table_id}`'
+
+    # Load the DataFrame from BigQuery
+    cleaned_data = pandas_gbq.read_gbq(query, project_id=project_id)
+
+    return cleaned_data
+
+def load_local_df():
+    """
+    load latest dataset
+    """
+    data_directory = os.path.join(os.path.dirname(__file__), '..', 'data')
+    local_df_paths = glob.glob(f"{data_directory}/merged_dataset*")
+
+    if not local_df_paths:
+        print('No models found in the directory')
+        return None
+
+    most_recent_df_path_on_disk = sorted(local_df_paths)[-1]
+
+    print(f"Load latest dataset from disk...")
+
+    df = pd.read_csv(most_recent_df_path_on_disk)
+
+    return df
