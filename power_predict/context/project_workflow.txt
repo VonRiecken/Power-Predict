@@ -15,17 +15,18 @@ if not load_model(selected_model):
 
 else:
     model = load_model(selected_model)
+    model.predict
 
 
 api:
-    from user:
+    from user - from streamlit:
     - give target
     - give X, incl. country (option for minimal features/all features)
 
     image needs to:
     - retrieve model for specific target (solar, wind, hydro, total)
     - load model
-    - process X
+    - process X_pred (given)
     - model.predict(X)
     - return dict('matching_target_name': prediction)
 
