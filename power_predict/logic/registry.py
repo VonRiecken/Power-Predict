@@ -4,7 +4,7 @@ import time
 import pickle
 
 from power_predict.params import *
-from google.cloud import storage
+# from google.cloud import storage
 
 # function to save the results of a model for evaluating performance
 def save_performance(model: str, params: dict, metrics: dict) -> None:

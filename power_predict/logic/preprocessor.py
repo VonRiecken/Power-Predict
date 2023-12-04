@@ -11,12 +11,12 @@ def targets_and_features(X: pd.DataFrame) -> pd.DataFrame:
     return X_useful
 
 
-def prepare_target(X:pd.DataFrame, target:str, five_features=False) -> pd.DataFrame and pd.DataFrame:
-    target_cols = X['Hydro', 'Solar', 'Total_Renewables__Hydro__Geo__Solar__Wind__Other_', 'Wind']
+# def prepare_target(X:pd.DataFrame, target:str, five_features=False) -> pd.DataFrame and pd.DataFrame:
+#     target_cols = X['Hydro', 'Solar', 'Total_Renewables__Hydro__Geo__Solar__Wind__Other_', 'Wind']
 
-    X_ready = X.drop(columns=['Month_year', 'Balance', 'Combustible_Renewables', 'Hydro', 'Other_Renewables', 'Solar', 'Total_Renewables__Hydro__Geo__Solar__Wind__Other_', 'Wind'])
-    # if five_features == True:
-    #     X_ready.drop(columns=)
+#     X_ready = X.drop(columns=['Month_year', 'Balance', 'Combustible_Renewables', 'Hydro', 'Other_Renewables', 'Solar', 'Total_Renewables__Hydro__Geo__Solar__Wind__Other_', 'Wind'])
+#     # if five_features == True:
+#     #     X_ready.drop(columns=)
 
 def log_transform_target():
     return None
