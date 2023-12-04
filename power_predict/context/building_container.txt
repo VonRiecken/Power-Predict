@@ -1,0 +1,37 @@
+launch Docker
+create Dockerfile - currently done
+$ docker info - check if docker daemon is running
+$ docker build --tag=$GAR_IMAGE:dev . --> ensure '.' is incl.
+$ docker images - check GAR_IMAGE repo is there
+$ docker run -it -e PORT=8000 -p 8000:8000 $GAR_IMAGE:dev sh
+  --> check python --version
+      ls
+      pip list
+  exit
+$ docker run -it -e PORT=8000 -p 8000:8000 $GAR_IMAGE:dev
+$ docker run -e PORT=8000 -p 8000:8000 --env-file .env $GAR_IMAGE:dev
+
+
+Deploying to Google Artifact Registry:
+$ gcloud auth configure-docker $GCP_REGION-docker.pkg.dev -> allow docker cmd to push an image in our GCP_REGION
+$ gcloud artifacts repositories create power_predict --repository-format=docker --location=$GCP_REGION --description="Repository for storing project images"
+$ docker build -t  $GCP_REGION-docker.pkg.dev/$GCP_PROJECT/power_predict/$GAR_IMAGE:prod . --> build image ready to push
+$ docker run -e PORT=8000 -p 8000:8000 --env-file .env $GCP_REGION-docker.pkg.dev/$GCP_PROJECT/taxifare/$GAR_IMAGE:prod --> check it runs locally before pushing to the cloud
+visit http://localhost:8000/ --> to check
+$ docker push $GCP_REGION-docker.pkg.dev/$GCP_PROJECT/taxifare/$GAR_IMAGE:prod --> push to Google Artifact Registry
+$ gcloud run deploy --env-vars-file .env.yaml --> passes the env params to gcloud
+
+Final deploy:
+$ gcloud run deploy --image $GCP_REGION-docker.pkg.dev/$GCP_PROJECT/power_predict/$GAR_IMAGE:prod --memory $GAR_MEMORY --region $GCP_REGION --env-vars-file .env.yaml
+
+copy service_url
+SERVICE_URL=https://wagon-data-tpl-image-xi54eseqrq-ew.a.run.app
+
+$ direnv reload
+
+Interacting with gcloud/docker:
+$ gcloud run services list -> check running services
+$ gcloud run services delete $INSTANCE -> shut down an instance
+
+$ docker stop 152e5b79177b  -> use the correct CONTAINER ID
+$ docker kill 152e5b79177b  -> only if the image refuses to stop (did someone create an ∞ loop?)

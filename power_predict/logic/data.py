@@ -1,4 +1,5 @@
 import os
+import glob
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -9,7 +10,7 @@ import pandas_gbq
 ## from colorama import Fore, Style
 from pathlib import Path
 from power_predict.params import *
-from sklearn.preprocessing import MinMaxScaler
+# from sklearn.preprocessing import MinMaxScaler
 
 
 def clean_production_data(Electricity_Data_Explorer):
@@ -102,7 +103,7 @@ def creating_weather_data():
     return dataframes
 
 
-def cleaning_weather_data():
+def merging_all_datasets():
 
     ## We call the dataframe containing the production data
     electricity_data_explorer = clean_production_data('Electricity_Data_Explorer')
@@ -164,26 +165,34 @@ def cleaning_weather_data():
     ## Specifying the data type 'datetime' of the Month_year column (needed to upload to BigQuery)
     final['Month_year'] = pd.to_datetime(final['Month_year'])
 
-    ## We're finally going to scale the columns related to the weather data
-    ## Standard Scaler Object
-    scaler = MinMaxScaler(feature_range=(0, 1))
+    # removing scaling from this function - implement in preprocessing function
+    # --> new data (i.e. X_pred) can be processed in the same way
+            # ## We're finally going to scale the columns related to the weather data
+            # ## Min-Max Scaler Object
+            # scaler = MinMaxScaler(feature_range=(0, 1))
 
-    ## We will only scale the columns containing 'value' in their naming
-    to_be_scaled = [col for col in final.columns if 'value' in col]
+            # ## We will only scale the columns containing 'value' in their naming
+            # to_be_scaled = [col for col in final.columns if 'value' in col]
 
-    # Fit and transform only the selected columns
-    final[to_be_scaled] = scaler.fit_transform(final[to_be_scaled])
+            # # Fit and transform only the selected columns
+            # final[to_be_scaled] = scaler.fit_transform(final[to_be_scaled])
+    return final
 
+
+def save_dataset_locally(df_to_save: pd.DataFrame, dataset_name: str) -> None:
+    """
+    Save a dataset locally with a name and timestamp
+    """
     ##os.makedirs(final_path, exist_ok=True) ## We check if the folder power_predict/data exists, if not, we create it
 
-    root_path = root_path = os.path.dirname(os.path.dirname(os.path.dirname(__file__))) ## We call the path of the current folder
-    final_path = os.path.join(root_path, "power_predict/data") ## We place ourlseves in the folder power_predict/data
+    root_path = os.path.dirname(os.path.dirname(__file__)) ## We call the path of the current folder
+    final_path = os.path.join(root_path, "data/") ## We place ourlseves in the folder power_predict/data
 
-    final.to_csv(f'{final_path}/merged_dataset{datetime.now()}.csv') ## We export the dataframe as csv and store it in power_predict/data and we put the timestamp at the end of the file's name
+    df_to_save.to_csv(f'{final_path}/{dataset_name}{datetime.now()}.csv') ## We export the dataframe as csv and store it in power_predict/data and we put the timestamp at the end of the file's name
 
-    print(f"✅ The merged_dataset{datetime.now()}.csv has been exported!")
+    print(f"✅ The {dataset_name}{datetime.now()}.csv has been exported!")
 
-    return final
+    return None
 
 
 def upload_data_bq(df_to_save, table_id:str):
@@ -192,10 +201,10 @@ def upload_data_bq(df_to_save, table_id:str):
     project_id = PROJECT_ID
     dataset_id = DATASET_ID
     # table_id =
-    sylvain_credentials_path = SYLVAIN_CREDIENTIALS_PATH   # Replace with the path to your service account JSON key file
+    google_credentials_path = GOOGLE_APPLICATION_CREDENTIALS   # Replace with the path to your service account JSON key file
 
     # Set up BigQuery client
-    client = bigquery.Client.from_service_account_json(sylvain_credentials_path, project=project_id)
+    client = bigquery.Client.from_service_account_json(google_credentials_path, project=project_id)
     ##print('BQ Client is set up')
 
     # Set up table reference
@@ -242,6 +251,20 @@ def load_data_bq(table_id: str) -> pd.DataFrame:
     return cleaned_data
 
 def load_local_df():
-    data_path = os.path.join(os.path.dirname(__file__), '..', 'data', 'merged_dataset.csv')
-    df = pd.read_csv(data_path)
+    """
+    load latest dataset
+    """
+    data_directory = os.path.join(os.path.dirname(__file__), '..', 'data')
+    local_df_paths = glob.glob(f"{data_directory}/merged_dataset*")
+
+    if not local_df_paths:
+        print('No models found in the directory')
+        return None
+
+    most_recent_df_path_on_disk = sorted(local_df_paths)[-1]
+
+    print(f"Load latest dataset from disk...")
+
+    df = pd.read_csv(most_recent_df_path_on_disk)
+
     return df
