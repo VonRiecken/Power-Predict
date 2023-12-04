@@ -30,6 +30,8 @@ X = X.drop(columns=columns_to_drop)
 scaler = StandardScaler()
 X_scaled = scaler.fit_transform(X)
 
+
+# Here you can choose which technology output to predict
 y = final['total_sol_wind_hyd']
 #y = final['Solar']
 #y = final['Wind']
