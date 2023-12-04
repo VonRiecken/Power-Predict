@@ -24,7 +24,6 @@ def predict(
     target: str,
     temp: float,
     humidity: float,
-    heat_index: float,
     irradiance: float,
     precipitation: float
 ):
@@ -38,10 +37,10 @@ def predict(
     X_pred_preprocessed = preprocess_features(X_pred)
 
     model = load_target_model(target)
-    # y_pred_spec_model = app.state.model.predict(X_pred_preprocessed)
+    y_pred_spec_model = model.predict(X_pred_preprocessed)
 
-    # return dict(total_renewable=float(y_pred))
-    return precipitation * temp
+    return dict(total_renewable=float(y_pred_spec_model))
+    # return precipitation * temp
 
 @app.get('/')
 def root():
