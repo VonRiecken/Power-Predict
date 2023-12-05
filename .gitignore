@@ -1,4 +1,5 @@
 .env
+.venv/
 .env.yaml
 .ipynb_checkpoints/
 .DS_Store
@@ -30,5 +31,13 @@ mlruns
 
 # Sandboxes
 sandbox.ipynb
-
 sandbox.py
+
+
+# other shit
+power_predict/logic/__pycache__/__init__.cpython-310.pyc
+power_project.egg-info/PKG-INFO
+power_project.egg-info/SOURCES.txt
+power_project.egg-info/requires.txt
+__pycache__/
+*.pyc

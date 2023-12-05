@@ -3,17 +3,16 @@ import pandas as pd
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import MinMaxScaler, OneHotEncoder
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.multioutput import MultiOutputRegressor
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 import matplotlib.pyplot as plt
 import seaborn as sns
-from power_predict.logic.registry import save_model#, save_results
+from power_predict.logic.registry import save_model, save_performance
 
 # --- Fetching Data ---
-df = pd.read_csv('/Users/FernandoSandoval/code/VonRiecken/Power-Predict/power_predict/data/merged_dataset2023-11-29 16:33:32.960189.csv')
-df.head(5)
+df = pd.read_csv('/Users/FernandoSandoval/code/VonRiecken/Power-Predict/power_predict/data/merged_dataset2023-12-01 18:08:35.062618.csv')
 
 # --- Data Preprocessing ---
 
@@ -25,7 +24,9 @@ df = df.set_index('Country_Month')
 X = df.drop(['Unnamed: 0', 'Month_year', 'Balance',
              'Combustible_Renewables', 'Hydro', 'Other_Renewables', 'Solar',
              'Total_Renewables__Hydro__Geo__Solar__Wind__Other_', 'Wind',
-             'total_sol_wind_hyd'], axis=1)
+             'total_sol_wind_hyd', 'value_CDD_18', 'value_CDD_21',
+             'value_HDD_16', 'value_HDD_18', 'value_Heat_index',], axis=1)
+
 
 # Applying logistic (log) transformation to the target variables
 y = np.log1p(df[['Hydro', 'Solar', 'Wind', 'total_sol_wind_hyd']])
@@ -55,6 +56,12 @@ pipeline = Pipeline(steps=[
     ('multi_knn_regressor', multi_knn_regressor)
 ])
 
+# --- 5-Fold Cross-Validation ---
+cv_scores = cross_val_score(pipeline, X_train, y_train, cv=5)
+mean_cv_score = np.mean(cv_scores)
+print(f"Cross-validated scores for 5 folds on the training data: {cv_scores}")
+print(f"Mean CV Score: {mean_cv_score}")
+
 # --- Model Training ---
 # Train the model
 pipeline.fit(X_train, y_train)
@@ -66,6 +73,31 @@ y_pred = pipeline.predict(X_test)  # X_test will be automatically preprocessed b
 # Inverse log transformation of the predictions
 y_pred = np.expm1(y_pred)
 
+# --- Save Model ---
+    # Save fitted pipeline model as 'knn_log'
 save_model(pipeline, 'knn_log')
 
-# save_results(model)
+# --- Save Params and Metrics ---
+    # Save params from fitted pipeline into a dict 'params'
+params = pipeline.named_steps['multi_knn_regressor'].get_params()
+
+# Define performace metrics
+    # Initialize an empty dictionary to store metrics
+metrics = {}
+for i, target in enumerate(['Hydro', 'Solar', 'Wind', 'total_sol_wind_hyd']):
+    mse = mean_squared_error(np.expm1(y_test.iloc[:, i]), y_pred[:, i])
+    mae = mean_absolute_error(np.expm1(y_test.iloc[:, i]), y_pred[:, i])
+    r2 = r2_score(np.expm1(y_test.iloc[:, i]), y_pred[:, i])
+    rmse = np.sqrt(mse)
+
+    # Store metrics in the dictionary
+    metrics[target] = {
+        'Mean CV Score': mean_cv_score,
+        'Mean Absolute Error': mae,
+        'Mean Squared Error': mse,
+        'Root Mean Squared Error': rmse,
+        'R-squared': r2
+    }
+
+    # Call save_performace function in registry.py to save dicts with a time stamp in the correct file
+save_performance('knn_log', params, metrics)
