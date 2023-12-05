@@ -1,14 +1,14 @@
 launch Docker
 create Dockerfile - currently done
 $ docker info - check if docker daemon is running
-$ docker build --tag=$GAR_IMAGE:dev . --> ensure '.' is incl.
+$ docker build --tag=$GAR_IMAGE . --> ensure '.' is incl.
 $ docker images - check GAR_IMAGE repo is there
-$ docker run -it -e PORT=8000 -p 8000:8000 $GAR_IMAGE:dev sh
+$ docker run -it -e PORT=8000 -p 8000:8000 $GAR_IMAGE sh
   --> check python --version
       ls
       pip list
   exit
-$ docker run -it -e PORT=8000 -p 8000:8000 $GAR_IMAGE:dev
+$ docker run -it -e PORT=8000 -p 8000:8000 $GAR_IMAGE
 $ docker run -e PORT=8000 -p 8000:8000 --env-file .env $GAR_IMAGE:dev
 
 
@@ -40,3 +40,8 @@ $ gcloud run services delete $INSTANCE -> shut down an instance
 
 $ docker stop 152e5b79177b  -> use the correct CONTAINER ID
 $ docker kill 152e5b79177b  -> only if the image refuses to stop (did someone create an ∞ loop?)
+
+
+
+MVP https:
+https://powerpredict-mvp.streamlit.app/
