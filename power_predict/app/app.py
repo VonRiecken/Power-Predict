@@ -1,12 +1,15 @@
 import streamlit as st
 import requests
 
-from power_predict.params import COUNTRIES_LIST, PREDICTION_TARGETS #, SERVICE_URL
-
 st.title('Power Predict')
 
-country_list = COUNTRIES_LIST
-target_list = PREDICTION_TARGETS
+target_list = ['Solar', 'Wind', 'Hydro', 'Total']
+country_list = ['Argentina', 'Australia', 'Austria', 'Belgium', 'Brazil', 'Bulgaria', 'Canada', 'Chile', 'Colombia',
+                  'Costa Rica', 'Croatia', 'Cyprus', 'Czech Republic', 'Denmark', 'Estonia', 'Finland', 'France', 'Germany',
+                  'Greece', 'Hungary', 'Iceland', 'India', 'Ireland', 'Italy', 'Japan', 'Korea', 'Latvia', 'Lithuania',
+                  'Luxembourg', 'Malta', 'Mexico', 'Netherlands', 'New Zealand', 'Norway', "People's Republic of China",
+                  'Poland', 'Portugal', 'Romania', 'Serbia', 'Slovak Republic', 'Slovenia', 'Spain', 'Sweden', 'Switzerland',
+                  'United Kingdom', 'United States']
 
 # call parameters
 # add units
@@ -38,8 +41,8 @@ params_ = {
 
 #  local
 # api_url_ = 'http://127.0.0.1:8000/predict'
-# cloud image
 
+# cloud image
 api_url_ = 'https://mvp-irosqzxbhq-ew.a.run.app/predict'
 
 if st.button('Get Renewable Energy prediction'):
