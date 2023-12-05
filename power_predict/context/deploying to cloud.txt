@@ -29,7 +29,7 @@ $ gcloud run deploy --env-vars-file .env.yaml --source . --> passes the env para
 Final deploy:
 $ gcloud run deploy --image $GCP_REGION-docker.pkg.dev/$GCP_PROJECT/power-predict/$GAR_IMAGE:prod --memory $GAR_MEMORY --region $GCP_REGION --env-vars-file .env.yaml
 
-copy service_url
+copy service_url into app.py
 SERVICE_URL=https://wagon-data-tpl-image-xi54eseqrq-ew.a.run.app
 
 $ direnv reload
