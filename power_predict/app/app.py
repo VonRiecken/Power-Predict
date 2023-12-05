@@ -12,11 +12,10 @@ country_list = ['Argentina', 'Australia', 'Austria', 'Belgium', 'Brazil', 'Bulga
                   'United Kingdom', 'United States']
 
 # call parameters
-# add units
 target = st.selectbox('Energy source', target_list)
 country = st.selectbox('Country', country_list)
 irradiance = st.number_input('Global Horizontal Irrandiance (W/m²)', format='%.0f')
-humidity = st.number_input('Relative humidity (%)', format='%.2f')
+humidity = st.slider('Relative humidity (%)', 0.0, 100.0, 50.0, 0.01)
 temp = st.number_input('Avergage temperature (°C)', format='%.2f')
 precipitation = st.number_input('Total precipitaiton (mm)', format='%.4f')
 
@@ -30,16 +29,18 @@ params_ = {
     }
 
 #  local
-api_url_ = 'http://127.0.0.1:8000/predict'
+# api_url_ = 'http://127.0.0.1:8000/predict'
 
 # cloud image
-# api_url_ = 'https://mvp-irosqzxbhq-ew.a.run.app/predict'
+api_url_ = 'https://stage1-irosqzxbhq-ew.a.run.app/predict'
+# 'https://mvp-irosqzxbhq-ew.a.run.app/predict'
 
-if st.button('Get Renewable Energy prediction'):
+
+if st.button('Get Renewable Energy Production'):
     res = requests.get(url=api_url_, params=params_)
 
     if res.status_code != 200:
         st.error('Error in API connection')
     else:
-        prediction = round(res.json()['target_pred'], 2)
+        prediction = round(res.json()['target_production'], 2)
         st.success(f"{country}'s {target} production will be {prediction} GWh")
