@@ -37,9 +37,9 @@ params_ = {
     }
 
 #  local
-api_url_ = 'http://127.0.0.1:8000/predict'
+# api_url_ = 'http://127.0.0.1:8000/predict'
 # cloud image
-# api_url_ = SERVICE_URL
+api_url_ = SERVICE_URL + '/predict'
 
 if st.button('Get Renewable Energy prediction'):
     res = requests.get(url=api_url_, params=params_)
