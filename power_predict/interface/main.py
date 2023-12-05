@@ -18,6 +18,13 @@ def load_target_model(target:str = None):
 
     return model
 
+<<<<<<< HEAD
+# Best Models
+best_hydro = 'knn_4feats_log'
+best_solar = 'knn_4feats'
+best_wind = 'knn_poly_4feats_log'
+best_total = 'knn_poly_4feats_log'
+=======
 
 def get_target_index(target: str) -> int:
     if target not in PREDICTION_TARGETS:
@@ -31,3 +38,4 @@ def get_target_index(target: str) -> int:
         return 2
     else:
         return 3
+>>>>>>> c4f1932725b4c352c2dd27a47470ec7f6a02b9fe

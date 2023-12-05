@@ -10,40 +10,55 @@ from power_predict.params import *
 def save_performance(model: str, params: dict, metrics: dict) -> None:
     """
     Persist params & metrics locally on the hard drive at
-    "{LOCAL_REGISTRY_PATH}/params/{current_timestamp}.pickle"
-    "{LOCAL_REGISTRY_PATH}/metrics/{current_timestamp}.pickle"
+    "{LOCAL_PATH_PARAMS}/models/model_results/{model_name}-params-{timestamp}.pickle"
+    "{LOCAL_PATH_PARAMS}/models/model_results/{model_name}-metrics-{timestamp}.pickle"
     """
 
-    model_name = model
     timestamp = time.strftime("%Y%m%d-%H%M%S")
+    model_name = model
 
+    # Save the Best Parameters with Timestamp
     if params is not None:
-        params_path = os.path.join(LOCAL_PATH_PARAMS, 'models', 'model_results', model_name + '-params', timestamp + '.pickle')
-        with open(params_path, 'wb') as file:
-            pickle.dump(params, file)
+        params_path = os.path.join(LOCAL_PATH_PARAMS, 'models', 'model_results', f"{model_name}-params-{timestamp}.pickle")
+        try:
+            with open(params_path, 'wb') as file:
+                pickle.dump(params, file)
+        except Exception as e:
+            print(f"Error saving parameters: {e}")
+            return None
 
+    # Save Performance Metrics with Timestamp
     if metrics is not None:
-        metrics_path = os.path.join(LOCAL_PATH_PARAMS, 'models', 'model_results', model_name + '-metrics', timestamp + '.pickle')
-        with open(metrics_path, 'b') as file:
-            pickle.dump(metrics, file)
+        metrics_path = os.path.join(LOCAL_PATH_PARAMS, 'models', 'model_results', f"{model_name}-metrics-{timestamp}.pickle")
+        try:
+            with open(metrics_path, 'wb') as file:
+                pickle.dump(metrics, file)
+        except Exception as e:
+            print(f"Error saving metrics: {e}")
+            return None
 
-    print("✅ Results saved locally")
+    print(f"✅ Results saved locally for {model_name}")
 
 
 def save_model(model, model_name: str) -> None:
     """
-    Persist trained model locally on the hard drive at f"{LOCAL_REGISTRY_PATH}/models/{timestamp}.h5"
-    - if MODEL_TARGET='gcs', also persist it in your bucket on GCS at "models/{timestamp}.h5"
+    Persist trained model locally on the hard drive at
+    "{LOCAL_PATH_PARAMS}/models/saved_models/{model_name}-{timestamp}.pkl"
     """
 
     timestamp = time.strftime("%Y%m%d-%H%M%S")
 
     # Save model locally
-    model_path = os.path.join(LOCAL_PATH_PARAMS, 'models', 'saved_models', f"{model_name}-{timestamp}.h5")
-    with open(model_path, 'wb') as file:
-        pickle.dump(model, file)
+    model_path = os.path.join(LOCAL_PATH_PARAMS, 'models', 'saved_models', f"{model_name}-{timestamp}.pkl")
 
-    return None
+    try:
+        with open(model_path, 'wb') as file:
+            pickle.dump(model, file)
+    except Exception as e:
+        print(f"Error saving model: {e}")
+        return None
+
+    print(f"✅ Model saved locally at {model_path}")
 
 
 def load_model(model_name: str):
