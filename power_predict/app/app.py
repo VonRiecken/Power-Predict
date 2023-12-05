@@ -1,7 +1,7 @@
 import streamlit as st
 import requests
 
-from power_predict.params import COUNTRIES_LIST, PREDICTION_TARGETS, SERVICE_URL
+from power_predict.params import COUNTRIES_LIST, PREDICTION_TARGETS #, SERVICE_URL
 
 st.title('Power Predict')
 
