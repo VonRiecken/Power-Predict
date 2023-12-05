@@ -14,3 +14,9 @@ run_api:
 
 train_models:
 	python power_predict/models/train_models.py
+
+create_dataset:
+	python power_predict/interface/create_dataset.py
+
+delete_local_datasets:
+	rm -r power_predict/data/*
