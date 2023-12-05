@@ -15,3 +15,9 @@ def load_target_model(target:str = None):
         model = load_model('best_total_model')
 
     return model
+
+# Best Models
+best_hydro = 'knn_4feats_log'
+best_solar = 'knn_4feats'
+best_wind = 'knn_poly_4feats_log'
+best_total = 'knn_poly_4feats_log'
