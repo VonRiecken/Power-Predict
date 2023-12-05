@@ -67,7 +67,7 @@ def predict(
     y_pred_spec_model = model.predict(X_pred)[0][get_target_index(target)]
     y_pred = np.expm1(y_pred_spec_model)
 
-    return dict(target_pred=float(y_pred))
+    return dict(target_production=float(y_pred))
 
     # return 100
 
