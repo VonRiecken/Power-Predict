@@ -5,8 +5,8 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from datetime import datetime
 
-from google.cloud import bigquery
-import pandas_gbq
+# from google.cloud import bigquery
+# import pandas_gbq
 ## from colorama import Fore, Style
 from pathlib import Path
 from power_predict.params import *

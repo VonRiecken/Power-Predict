@@ -20,6 +20,9 @@ power_predict/logic/registry.py
 power_predict/models/Polynomial_Regression.py
 power_predict/models/__init__.py
 power_predict/models/knn_log.py
+
+power_predict/models/linear_regression.py
+
 power_predict/models/random_forest.py
 power_predict/models/test_john.py
 power_predict/models/tpot.py
