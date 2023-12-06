@@ -6,23 +6,21 @@ def load_target_model(target:str = None):
         return 'Target not in scope'
 
     if target == 'Solar':
-        model = load_model('knn_log')
+        model = load_model(best_solar)
     elif target == 'Hydro':
-        model = load_model('knn_log')
+        model = load_model(best_hydro)
     elif target == 'Wind':
-        model = load_model('knn_log')
-    elif target == 'Total':
-        model = load_model('knn_log')
+        model = load_model(best_wind)
     else:
-        model = load_model('knn_log')
+        model = load_model(best_total)
 
     return model
 
 # Best Models
 best_hydro = 'knn_4feats_log'
-best_solar = 'KNN_Poly_4feats_TIME_log'
-best_wind = 'KNN_Poly_4feats_TIME_log'
-best_total = 'KNN_Poly_4feats_TIME_log'
+best_solar = 'knn_poly_4feats_time_log'
+best_wind = 'knn_poly_4feats_time_log'
+best_total = 'knn_poly_4feats_time_log'
 
 def get_target_index(target: str) -> int:
     if target not in PREDICTION_TARGETS:

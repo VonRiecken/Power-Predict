@@ -41,17 +41,18 @@ country_list = ['Argentina', 'Australia', 'Austria', 'Belgium', 'Brazil', 'Bulga
 st.title('Renewable Power Prediction')
 st.markdown('Estimate the renewable energy production potential for various energy sources and countries.')
 
-add_bg_from_local('power_predict/app/wind.jpg')
+add_bg_from_local('power_predict/app/earth_spin.gif')
 
 # call parameters
 target = st.selectbox('Energy source ⚡️', target_list)
 country = st.selectbox('Country 🌍', country_list)
-date = st.date_input('Select month and year of prediction 📅')
-formatted_date = pd.to_datetime(date).strftime('%Y-%m')
+date = st.date_input('Select month and year of prediction 📅 (any day in the month)')
+# formatted_date = pd.to_datetime(date).strftime('%Y-%m')
+formatted_date = date.strftime('%Y-%m')
 temp = st.number_input('Avergage temperature 🌡️ (°C)', format='%.2f')
 irradiance = st.number_input('Global Horizontal Irrandiance 🌤️ (W/m²)', format='%.0f')
 precipitation = st.number_input('Total precipitaiton ☔️ (mm)', format='%.4f')
-humidity = st.slider('Relative humidity 💦 (%)', 0.0, 100.0, 50.0, 0.01)
+humidity = st.slider('Relative humidity 💦 (%)', 0, 100, 50, 1)
 
 # Set background
 if target == '--Select--':
@@ -81,12 +82,18 @@ if st.button('Get Renewable Energy Production'):
         "humidity": humidity,
         "temp": temp,
         "precipitation": precipitation,
-        # "date": formatted_date
+        "date": formatted_date
     }
     res = requests.get(url=api_url_, params=params_)
 
     if res.status_code != 200:
         st.error('Please select target')
+    elif target == 'Total':
+        prediction = res.json()['target_production']
+        st.success(f"🌍 {country}'s Solar production will be {round(prediction[1], 2)} GWh ☀️")
+        st.success(f"🌍 {country}'s Wind production will be {round(prediction[2], 2)} GWh 🌀")
+        st.success(f"🌍 {country}'s Hydro production will be {round(prediction[0], 2)} GWh 💧")
+        st.success(f"🌍 {country}'s Total production will be {round(prediction[3], 2)} GWh ⚡️")
     else:
         prediction = round(res.json()['target_production'], 2)
-        st.success(f"{country}'s {target} production will be {prediction} GWh")
+        st.success(f"🌍 {country}'s {target} production will be {prediction} GWh ⚡️")

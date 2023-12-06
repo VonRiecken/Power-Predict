@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from power_predict.interface.main import load_target_model, get_target_index
-# from power_predict.logic.preprocessor import ordinal_month
+from power_predict.logic.preprocessor import ordinal_mapping_string
 
 app = FastAPI()
 
@@ -24,13 +24,13 @@ def predict(
     temp: float,
     humidity: float,
     irradiance: float,
-    # date: pd.Timestamp,
+    date: str,
     precipitation: float
 ):
     """
     Make prediciton for country renewable electricy production,  given certain weather conditions
     """
-    # ordinal_month = ordinal_month(date)
+    ordinal_month = ordinal_mapping_string(date)
 
     data_X = {
     'Country': [country],
@@ -38,20 +38,21 @@ def predict(
     'value_Relative_Humidty': [humidity],
     'value_Global_Horizontal_Irrandiance': [irradiance],
     'value_Total_Precipitation': [precipitation],
-    #'ordinal_month': [ordinal_month]
+    'ordinal_month': [ordinal_month]
     }
 
     X_pred = pd.DataFrame(data_X, index=[0])
 
     model = load_target_model(target)
-    y_pred_spec_model = model.predict(X_pred)[0][get_target_index(target)]
+    y_array_spec_model = model.predict(X_pred)
 
-    if target == 'Solar':
-        y_pred = y_pred_spec_model
+
+    if target == 'Total':
+        y_pred = np.expm1(y_array_spec_model[0])
+        return dict(target_production=list(y_pred))
     else:
-        y_pred = np.expm1(y_pred_spec_model)
-
-    return dict(target_production=float(y_pred))
+        y_pred = np.expm1(y_array_spec_model[0][get_target_index(target)])
+        return dict(target_production=float(y_pred))
 
 
 @app.get('/')
