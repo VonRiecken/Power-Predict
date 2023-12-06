@@ -4,6 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from power_predict.interface.main import load_target_model, get_target_index
+# from power_predict.logic.preprocessor import ordinal_month
 
 app = FastAPI()
 
@@ -23,18 +24,21 @@ def predict(
     temp: float,
     humidity: float,
     irradiance: float,
+    # date: pd.Timestamp,
     precipitation: float
 ):
     """
     Make prediciton for country renewable electricy production,  given certain weather conditions
     """
+    # ordinal_month = ordinal_month(date)
 
     data_X = {
     'Country': [country],
     'value_Temperature': [temp],
     'value_Relative_Humidty': [humidity],
     'value_Global_Horizontal_Irrandiance': [irradiance],
-    'value_Total_Precipitation': [precipitation]
+    'value_Total_Precipitation': [precipitation],
+    #'ordinal_month': [ordinal_month]
     }
 
     X_pred = pd.DataFrame(data_X, index=[0])
