@@ -1,30 +1,30 @@
 from power_predict.logic.registry import load_model
 from power_predict.params import PREDICTION_TARGETS
 
-# Best Models - update if models change
-best_hydro = 'knn_4feats_log'
-best_solar = 'knn_4feats'
-best_wind = 'knn_poly_4feats_log'
-best_total = 'knn_poly_4feats_log'
-
 def load_target_model(target:str = None):
     if target not in PREDICTION_TARGETS:
         return 'Target not in scope'
 
     if target == 'Solar':
-        model = load_model(best_solar)
+        model = load_model('knn_log')
     elif target == 'Hydro':
-        model = load_model(best_hydro)
+        model = load_model('knn_log')
     elif target == 'Wind':
-        model = load_model(best_wind)
+        model = load_model('knn_log')
+    elif target == 'Total':
+        model = load_model('knn_log')
     else:
-        model = load_model(best_total)
+        model = load_model('knn_log')
 
     return model
 
+# Best Models
+best_hydro = 'knn_4feats_log'
+best_solar = 'KNN_Poly_4feats_TIME_log'
+best_wind = 'KNN_Poly_4feats_TIME_log'
+best_total = 'KNN_Poly_4feats_TIME_log'
 
 def get_target_index(target: str) -> int:
-
     if target not in PREDICTION_TARGETS:
         return 'Target not in scope'
 
