@@ -1,14 +1,14 @@
 launch Docker
 create Dockerfile - currently done
 $ docker info - check if docker daemon is running
-$ docker build --tag=$GAR_IMAGE . --> ensure '.' is incl.
+$ docker build --tag=$GAR_IMAGE:dev . --> ensure '.' is incl.
 $ docker images - check GAR_IMAGE repo is there
-$ docker run -it -e PORT=8000 -p 8000:8000 $GAR_IMAGE sh
+$ docker run -it -e PORT=8000 -p 8000:8000 $GAR_IMAGE:dev sh
   --> check python --version
       ls
       pip list
   exit
-$ docker run -it -e PORT=8000 -p 8000:8000 $GAR_IMAGE
+$ docker run -it -e PORT=8000 -p 8000:8000 $GAR_IMAGE:dev
 $ docker run -e PORT=8000 -p 8000:8000 --env-file .env $GAR_IMAGE:dev
 
 
@@ -45,3 +45,6 @@ $ docker kill 152e5b79177b  -> only if the image refuses to stop (did someone cr
 
 MVP https:
 https://powerpredict-mvp.streamlit.app/
+
+Stage 1 https:
+https://power-predict.streamlit.app/
