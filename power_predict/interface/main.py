@@ -6,15 +6,15 @@ def load_target_model(target:str = None):
         return 'Target not in scope'
 
     if target == 'Solar':
-        model = load_model('knn_log')
+        model = load_model(best_solar)
     elif target == 'Hydro':
-        model = load_model('knn_log')
+        model = load_model(best_hydro)
     elif target == 'Wind':
-        model = load_model('knn_log')
+        model = load_model(best_wind)
     elif target == 'Total':
-        model = load_model('knn_log')
+        model = load_model(best_total)
     else:
-        model = load_model('knn_log')
+        model = load_model(best_total)
 
     return model
 
