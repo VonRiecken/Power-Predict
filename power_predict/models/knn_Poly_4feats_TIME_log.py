@@ -12,6 +12,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from power_predict.logic.registry import save_model, save_performance
 from power_predict.logic.data import load_local_df
+from power_predict.logic.preprocessor import ordinal_mapping
 
 # --- Fetching Data ---
 df = load_local_df()
@@ -19,18 +20,7 @@ df = load_local_df()
 # --- Data Preprocessing ---
 
 # Adding Ordinal Month Column
-    # Ensure Month_year is in a proper format and convert to datetime
-df['Month_year'] = pd.to_datetime(df['Month_year'].astype(str)).dt.to_period('M')
-
-    # Get the sorted unique months as a list
-unique_months = sorted(df['Month_year'].unique())
-
-    # Create an ordinal encoding mapping
-ordinal_mapping = {month: i+1 for i, month in enumerate(unique_months)}
-
-    # Map the ordinal encoding to the dataset
-df['ordinal_month'] = df['Month_year'].map(ordinal_mapping)
-
+df['ordinal_month'] = df['Month_year'].apply(ordinal_mapping)
 
 # Setting Country + Month year as Index
 df['Country_Month'] = df['Country'] + '_' + df['Month_year'].astype(str)
@@ -84,12 +74,6 @@ pipeline = Pipeline(steps=[
     ('poly_features', polynomial_features),
     ('multi_knn_regressor', multi_knn_regressor)
 ])
-
-# # --- 5-Fold Cross-Validation ---
-# cv_scores = cross_val_score(pipeline, X_train, y_train, cv=5)
-# mean_cv_score = np.mean(cv_scores)
-# print(f"Cross-validated scores for 5 folds on the training data: {cv_scores}")
-# print(f"Mean CV Score: {mean_cv_score}")
 
 
 # --- Model Training ---
