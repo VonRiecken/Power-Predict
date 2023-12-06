@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from power_predict.logic.registry import save_model, save_performance
 from power_predict.logic.data import load_local_df
-from power_predict.logic.preprocessor import ordinal_mapping
+from power_predict.logic.preprocessor import ordinal_mapping, custom_scaler
 
 # --- Fetching Data ---
 df = load_local_df()
@@ -42,9 +42,9 @@ y = np.log1p(df[['Hydro', 'Solar', 'Wind', 'total_sol_wind_hyd']])
 num_features = [col for col in X.select_dtypes(include=[np.number]).columns if col != 'ordinal_months']
 
     # Custom scaler function for 'ordinal_months'
-def custom_scaler(om):
-    om_scaled = (om - 1) / (240 - 1)  # scale from 0 to 1 with max value 240
-    return om_scaled
+# def custom_scaler(om):
+#     om_scaled = (om - 1) / (240 - 1)  # scale from 0 to 1 with max value 240
+#     return om_scaled
 
     # Create a transformer for the custom scaling
 custom_scaler_transformer = FunctionTransformer(np.vectorize(custom_scaler), validate=False)
@@ -89,7 +89,7 @@ y_pred = np.expm1(y_pred)
 
 # --- Save Model ---
     # Save fitted pipeline model as 'knn_log'
-save_model(pipeline, 'knn_log')
+save_model(pipeline, 'knn_poly_4feats_time_log')
 
 # --- Save Params and Metrics ---
     # Save params from fitted pipeline into a dict 'params'
@@ -106,7 +106,7 @@ for i, target in enumerate(['Hydro', 'Solar', 'Wind', 'total_sol_wind_hyd']):
 
     # Store metrics in the dictionary
     metrics[target] = {
-        'Mean CV Score': mean_cv_score,
+        # 'Mean CV Score': mean_cv_score,
         'Mean Absolute Error': mae,
         'Mean Squared Error': mse,
         'Root Mean Squared Error': rmse,
