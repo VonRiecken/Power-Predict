@@ -12,7 +12,7 @@ from sklearn.model_selection import cross_val_score
 #from sklearn.externals import joblib
 
 # --- Fetching Data ---
-df = df = load_local_df()
+df =  load_local_df()
 #df = pd.read_csv('/Users/bryan/code/VonRiecken/Power-Predict/power_predict/data/merged_dataset2023-12-01 18:08:35.062618.csv')
 
 df.head(5)
