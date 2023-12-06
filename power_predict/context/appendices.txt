@@ -12,3 +12,6 @@ https://www.iea.org/data-and-statistics/data-product/monthly-electricity-statist
 
 Electricity statistics User Guide:
 https://iea.blob.core.windows.net/assets/ed0a7d78-fad7-4b27-81d3-30d4d7018525/Monthlyelectricitystatistics_Documentation_2023.pdf
+
+Regulatory Indicators for Sustainable Energy
+https://rise.esmap.org/analytics

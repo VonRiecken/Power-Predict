@@ -19,7 +19,7 @@ irradiance = st.number_input('Global Horizontal Irrandiance', format='%.4f')
 # hdd_18 = st.number_input('Heating Degree Days below 18', format='%.4f')
 # heat_index = st.number_input('Heat Index', format='%.4f')
 humidity = st.number_input('Relative humidity', format='%.4f')
-temp = st.number_input('Avergage temperature', format='%.4f')
+temp = st.number_input('Average temperature', format='%.4f')
 precipitation = st.number_input('Total precipitaiton mm', format='%.4f')
 
 params_ = {

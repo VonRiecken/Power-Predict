@@ -1,12 +1,8 @@
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.pipeline import make_pipeline
-from sklearn.model_selection import GridSearchCV, train_test_split
-import pandas as pd
-import seaborn as sns
-import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
 import os
 from google.cloud import bigquery
-import pandas_gbq
 from pathlib import Path
 import numpy as np
 from sklearn.metrics import mean_absolute_error
@@ -17,9 +13,57 @@ from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import mean_squared_error, r2_score
 from power_predict.logic.registry import *
+from power_predict.logic.data import merging_all_datasets
+import pandas as pd
+from sklearn.compose import ColumnTransformer
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import MinMaxScaler, OneHotEncoder
+from sklearn.model_selection import train_test_split, cross_val_score
+from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
+from power_predict.logic.registry import save_model, save_performance
 
 
-def polynomial_regression_total(dataframe): ## best score = 0.8760212307541482
+def polynomial_regression(dataframe, target:str): ## best score = 0.8760212307541482
+
+    # --- Data Preprocessing ---
+
+    print(list(dataframe.columns))
+
+    # Setting Country + Month year as Index
+    dataframe['Country_Month'] = dataframe['Country'] + '_' + dataframe['Month_year'].astype(str)
+    dataframe = dataframe.set_index('Country_Month')
+
+    # Separating features and target variables (took out 'Unnamed: 0')
+    X = dataframe.drop(['Month_year', 'Balance',
+                'Combustible_Renewables', 'Hydro', 'Other_Renewables', 'Solar',
+                'Total_Renewables__Hydro__Geo__Solar__Wind__Other_', 'Wind',
+                'total_sol_wind_hyd', 'value_CDD_18', 'value_CDD_21',
+                'value_HDD_16', 'value_HDD_18', 'value_Heat_index',], axis=1)
+
+    # Applying logistic (log) transformation to the target variables
+    if target == 'total_sol_wind_hyd':
+        y = np.log1p(dataframe[['total_sol_wind_hyd']])
+    elif target == 'Solar':
+        y = np.log1p(dataframe[['Solar']])
+    elif target == 'Wind':
+        y = np.log1p(dataframe[['Wind']])
+    elif target == 'Hydro':
+        y = np.log1p(dataframe[['Hydro']])
+    else:
+        print('Target type not recognised!')
+
+    # Init list of numerical columns
+    num_features = X.select_dtypes(include=[np.number]).columns.tolist()
+
+    # Preprocessing pipeline
+    preprocessing_pipeline = ColumnTransformer(
+        transformers=[
+            ('num', Pipeline(steps=[
+                ('scaler', MinMaxScaler())
+            ]), num_features),
+            ('cat', OneHotEncoder(handle_unknown='ignore'), ['Country'])
+        ])
+
 
     ##columns_X = [col for (col in final.columns if 'value' in col)]or (col in final.columns if 'Country' in col)]
     columns_X = [col for col in dataframe.columns if 'value' in col or 'Country' in col or 'Month_year' in col]
@@ -29,182 +73,43 @@ def polynomial_regression_total(dataframe): ## best score = 0.8760212307541482
 
     # Drop the original Timestamp column if needed as well as the country
     X = X.drop(columns=['Month_year', 'Country'])
-    y = dataframe['total target (wind, solar, hydro)']
 
     # Assuming X, y are your full dataset
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-    # Define a range of values for polynomial degree and number of folds
-    degree_values = [1, 2, 3, 4, 5]
+    # --- Model Training ---
+    # Train the model
+    preprocessing_pipeline.fit(X_train, y_train)
 
-    # Create a parameter grid for GridSearchCV
-    param_grid = {'polynomialfeatures__degree': degree_values}
+    ## ----- POLYNOMIAL REGRESSION ------- ##
 
-    # Create a Polynomial Regression model using a pipeline
-    poly_model = make_pipeline(PolynomialFeatures(), LinearRegression())
-
-    # Use GridSearchCV to find the best polynomial degree
-    grid_search = GridSearchCV(poly_model, param_grid, scoring='neg_mean_squared_error', cv=5)
-    grid_search.fit(X_train, y_train)
-
-    # Get the best polynomial degree
-    best_degree = grid_search.best_params_['polynomialfeatures__degree']
-    print(f'✅ The best polynomial degree is: {best_degree}')
+    # We used the best polynomial degree found with a Gridsearch
+    best_degree = 3
 
     # Fit the Polynomial Regression model with the best degree on the full training set
     poly_model_best = make_pipeline(PolynomialFeatures(degree=best_degree), LinearRegression())
     poly_model_best.fit(X_train, y_train)
+
+    # Perform cross-validation and calculate the mean cross-validated R-squared score
+    cross_val_cod = cross_val_score(poly_model_best, X, y, cv=5, scoring='r2').mean()
 
     # Make predictions on the test set
     y_pred_poly = poly_model_best.predict(X_test)
 
     # Calculate R-squared (Coefficient of Determination)
     cod_poly = r2_score(y_test, y_pred_poly)
-    print(f'✅ Coefficient of Determination (COD) for Polynomial Regression: {cod_poly}')
-    print(f'✅ Mean Squared Error on Validation Set: {grid_search.best_score_}')  # Negative of Mean Squared Error
+
+    mae = mean_absolute_error(y_test, y_pred_poly)
+    mse = mean_squared_error(y_test, y_pred_poly)
+
+    print(f'Mean Absolute Error: {mae}')
+    print(f'Mean Squared Error: {mse}')
+    print(f'cross_val_cod: {cross_val_cod}')
+    print(f'Coefficient of Determination (COD): {cod_poly}')
 
     return poly_model_best
 
-save_model(pol, 'poly-linear')
 
+save_model(polynomial_regression, 'polynomial-regression')
 
-def polynomial_regression_solar(dataframe): ## best score = 0.49064656857664113
-
-    ##columns_X = [col for (col in final.columns if 'value' in col)]or (col in final.columns if 'Country' in col)]
-    columns_X = [col for col in dataframe.columns if 'value' in col or 'Country' in col or 'Month_year' in col]
-
-    ##  We're selecting the columns named with 'value'
-    X = dataframe[columns_X] # For the polynomial reg we use all our features, even the ones that are highly correlated
-
-    # Drop the original Timestamp column if needed as well as the country
-    X = X.drop(columns=['Month_year', 'Country'])
-    y = dataframe['Solar']
-
-    # Assuming X, y are your full dataset
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-    # Define a range of values for polynomial degree and number of folds
-    degree_values = [1, 2, 3, 4, 5]
-
-    # Create a parameter grid for GridSearchCV
-    param_grid = {'polynomialfeatures__degree': degree_values}
-
-    # Create a Polynomial Regression model using a pipeline
-    poly_model = make_pipeline(PolynomialFeatures(), LinearRegression())
-
-    # Use GridSearchCV to find the best polynomial degree
-    grid_search = GridSearchCV(poly_model, param_grid, scoring='neg_mean_squared_error', cv=5)
-    grid_search.fit(X_train, y_train)
-
-    # Get the best polynomial degree
-    best_degree = grid_search.best_params_['polynomialfeatures__degree']
-    print(f'✅ The best polynomial degree is: {best_degree}')
-
-    # Fit the Polynomial Regression model with the best degree on the full training set
-    poly_model_best_solar = make_pipeline(PolynomialFeatures(degree=best_degree), LinearRegression())
-    poly_model_best_solar.fit(X_train, y_train)
-
-    # Make predictions on the test set
-    y_pred_poly = poly_model_best_solar.predict(X_test)
-
-    # Calculate R-squared (Coefficient of Determination)
-    cod_poly = r2_score(y_test, y_pred_poly)
-    print(f'✅ Coefficient of Determination (COD) for Polynomial Regression: {cod_poly}')
-    print(f'✅ Mean Squared Error on Validation Set: {grid_search.best_score_}')  # Negative of Mean Squared Error
-
-    return poly_model_best_solar
-
-
-
-def polynomial_regression_wind(dataframe): ## best score = 0.6633692349878293
-
-    ##columns_X = [col for (col in final.columns if 'value' in col)]or (col in final.columns if 'Country' in col)]
-    columns_X = [col for col in dataframe.columns if 'value' in col or 'Country' in col or 'Month_year' in col]
-
-    ##  We're selecting the columns named with 'value'
-    X = dataframe[columns_X] # For the polynomial reg we use all our features, even the ones that are highly correlated
-
-    # Drop the original Timestamp column if needed as well as the country
-    X = X.drop(columns=['Month_year', 'Country'])
-    y = dataframe['Wind']
-
-    # Assuming X, y are your full dataset
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-    # Define a range of values for polynomial degree and number of folds
-    degree_values = [1, 2, 3, 4, 5]
-
-    # Create a parameter grid for GridSearchCV
-    param_grid = {'polynomialfeatures__degree': degree_values}
-
-    # Create a Polynomial Regression model using a pipeline
-    poly_model = make_pipeline(PolynomialFeatures(), LinearRegression())
-
-    # Use GridSearchCV to find the best polynomial degree
-    grid_search = GridSearchCV(poly_model, param_grid, scoring='neg_mean_squared_error', cv=5)
-    grid_search.fit(X_train, y_train)
-
-    # Get the best polynomial degree
-    best_degree = grid_search.best_params_['polynomialfeatures__degree']
-    print(f'✅ The best polynomial degree is: {best_degree}')
-
-    # Fit the Polynomial Regression model with the best degree on the full training set
-    poly_model_best_wind = make_pipeline(PolynomialFeatures(degree=best_degree), LinearRegression())
-    poly_model_best_wind.fit(X_train, y_train)
-
-    # Make predictions on the test set
-    y_pred_poly = poly_model_best_wind.predict(X_test)
-
-    # Calculate R-squared (Coefficient of Determination)
-    cod_poly = r2_score(y_test, y_pred_poly)
-    print(f'✅ Coefficient of Determination (COD) for Polynomial Regression: {cod_poly}')
-    print(f'✅ Mean Squared Error on Validation Set: {grid_search.best_score_}')  # Negative of Mean Squared Error
-
-    return poly_model_best_wind
-
-
-def polynomial_regression_hydro(dataframe): ## best score = 0.9023996600257764
-
-    ##columns_X = [col for (col in final.columns if 'value' in col)]or (col in final.columns if 'Country' in col)]
-    columns_X = [col for col in dataframe.columns if 'value' in col or 'Country' in col or 'Month_year' in col]
-
-    ##  We're selecting the columns named with 'value'
-    X = dataframe[columns_X] # For the polynomial reg we use all our features, even the ones that are highly correlated
-
-    # Drop the original Timestamp column if needed as well as the country
-    X = X.drop(columns=['Month_year', 'Country'])
-    y = dataframe['Wind']
-
-    # Assuming X, y are your full dataset
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-    # Define a range of values for polynomial degree and number of folds
-    degree_values = [1, 2, 3, 4, 5]
-
-    # Create a parameter grid for GridSearchCV
-    param_grid = {'polynomialfeatures__degree': degree_values}
-
-    # Create a Polynomial Regression model using a pipeline
-    poly_model = make_pipeline(PolynomialFeatures(), LinearRegression())
-
-    # Use GridSearchCV to find the best polynomial degree
-    grid_search = GridSearchCV(poly_model, param_grid, scoring='neg_mean_squared_error', cv=5)
-    grid_search.fit(X_train, y_train)
-
-    # Get the best polynomial degree
-    best_degree = grid_search.best_params_['polynomialfeatures__degree']
-    print(f'✅ The best polynomial degree is: {best_degree}')
-
-    # Fit the Polynomial Regression model with the best degree on the full training set
-    poly_model_best_hydro = make_pipeline(PolynomialFeatures(degree=best_degree), LinearRegression())
-    poly_model_best_hydro.fit(X_train, y_train)
-
-    # Make predictions on the test set
-    y_pred_poly = poly_model_best_hydro.predict(X_test)
-
-    # Calculate R-squared (Coefficient of Determination)
-    cod_poly = r2_score(y_test, y_pred_poly)
-    print(f'✅ Coefficient of Determination (COD) for Polynomial Regression: {cod_poly}')
-    print(f'✅ Mean Squared Error on Validation Set: {grid_search.best_score_}')  # Negative of Mean Squared Error
-
-    return poly_model_best_hydro
+polynomial_regression(merging_all_datasets(), 'total_sol_wind_hyd')
