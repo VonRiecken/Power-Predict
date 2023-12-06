@@ -1,18 +1,47 @@
 import streamlit as st
 import pandas as pd
 import requests
+import base64
 
-from power_predict.app.app import add_bg_from_local, target_list,  country_list
+# Background image
+def add_bg_from_local(image_file):
+    with open(image_file, "rb") as image_file:
+        encoded_string = base64.b64encode(image_file.read())
 
-add_bg_from_local('power_predict/app/earth_spin.gif')
+    st.markdown(
+    f"""
+    <style>
+    .stApp {{
+        background-image: url(data:image/{"jpg"};base64,{encoded_string.decode()});
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        height: 100vh;
+    }}
 
-# App title and subtitle
+    .st-emotion-cache-1wmy9hl {{
+            flex-direction: column;
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.7);
+            border-radius: 20px;
+        }}
+    </style>
+    """,
+    unsafe_allow_html=True
+    )
+
+target_list = ['--Select--','Solar', 'Wind', 'Hydro', 'Total']
+country_list = ['Argentina', 'Australia', 'Austria', 'Belgium', 'Brazil', 'Bulgaria', 'Canada', 'Chile', 'Colombia',
+                'Costa Rica', 'Croatia', 'Cyprus', 'Czech Republic', 'Denmark', 'Estonia', 'Finland', 'France', 'Germany',
+                'Greece', 'Hungary', 'Iceland', 'India', 'Ireland', 'Italy', 'Japan', 'Korea', 'Latvia', 'Lithuania',
+                'Luxembourg', 'Malta', 'Mexico', 'Netherlands', 'New Zealand', 'Norway', "People's Republic of China",
+                'Poland', 'Portugal', 'Romania', 'Serbia', 'Slovak Republic', 'Slovenia', 'Spain', 'Sweden', 'Switzerland',
+                'United Kingdom', 'United States']
+
 st.title('Renewable Power Prediction')
-# st.markdown('Estimate the renewable energy production potential for various energy sources and countries.')
+st.markdown('Estimate the renewable energy production potential for various energy sources and countries.')
 
-if st.button('Go back to Landing'):
-    st.experimental_set_query_params(page='landing')
-#     st.experimental_rerun()
+add_bg_from_local('power_predict/app/wind.jpg')
 
 # call parameters
 target = st.selectbox('Energy source ⚡️', target_list)
@@ -26,8 +55,7 @@ humidity = st.slider('Relative humidity 💦 (%)', 0.0, 100.0, 50.0, 0.01)
 
 # Set background
 if target == '--Select--':
-    add_bg_from_local('power_predict/app/earth_spin.gif')
-    # add_bg_from_local('power_predict/app/earth_spin.gif')
+    add_bg_from_local('power_predict/app/wind.jpg')
 elif target == 'Solar':
     add_bg_from_local('power_predict/app/solar.jpg')
 elif target == 'Wind':
@@ -53,7 +81,7 @@ if st.button('Get Renewable Energy Production'):
         "humidity": humidity,
         "temp": temp,
         "precipitation": precipitation,
-        # "date": date
+        # "date": formatted_date
     }
     res = requests.get(url=api_url_, params=params_)
 
