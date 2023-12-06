@@ -8,8 +8,8 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error
 from xgboost import XGBRegressor
 from power_predict.logic.data import load_local_df
-#from sklearn.externals import joblib
 
+#from sklearn.externals import joblib
 
 # --- Fetching Data ---
 df = df = load_local_df()
@@ -47,6 +47,9 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 def run_xgboost_model():
     df = load_local_df()
 
+
+
+
     # Preprocessing
     final = df
     columns_X = [col for col in final.columns if 'value' in col]
@@ -68,10 +71,10 @@ def run_xgboost_model():
     X_scaled = scaler.fit_transform(X)
 
     # Here you can choose which technology output to predict
-    y = final['total_sol_wind_hyd']
+    #y = final['total_sol_wind_hyd']
     #y = final['Solar']
     #y = final['Wind']
-    #y = final['Hydro']
+    y = final['Hydro']
 
     # Split training and testing sets
     X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=42)
