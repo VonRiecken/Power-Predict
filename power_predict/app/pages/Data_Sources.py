@@ -1,6 +1,24 @@
 import streamlit as st
 import base64
 
+st.set_page_config(
+    page_title="Renewable Energy Production Prediction",
+    page_icon="🌍",
+    layout="centered",
+    initial_sidebar_state='collapsed'
+)
+
+st.markdown(
+    """
+    <style>
+        body {
+            zoom: 130%;
+        }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
 def set_dark_mode_and_zoom():
     dark_mode_and_zoom_script = """
         <script>

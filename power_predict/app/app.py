@@ -8,6 +8,17 @@ st.set_page_config(
     initial_sidebar_state='collapsed'
 )
 
+st.markdown(
+    """
+    <style>
+        body {
+            zoom: 130%;
+        }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
 def set_dark_mode_and_zoom():
     dark_mode_and_zoom_script = """
         <script>

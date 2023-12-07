@@ -9,32 +9,17 @@ st.set_page_config(
     layout="centered",
     initial_sidebar_state='collapsed'
 )
-def set_dark_mode_and_zoom():
-    dark_mode_and_zoom_script = """
-        <script>
-            const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-            const body = document.body;
 
-            function setDarkModePreference() {
-                if (darkModeMediaQuery.matches) {
-                    body.classList.add('dark-mode');
-                } else {
-                    body.classList.remove('dark-mode');
-                }
-            }
-
-            function setZoomLevel() {
-                document.body.style.zoom = '200%';
-            }
-
-            setDarkModePreference(); // Set initial dark mode preference
-            setZoomLevel(); // Set initial zoom level
-
-            // Listen for changes in the system dark mode preference
-            darkModeMediaQuery.addEventListener('change', setDarkModePreference);
-        </script>
+st.markdown(
     """
-    st.markdown(dark_mode_and_zoom_script, unsafe_allow_html=True)
+    <style>
+        body {
+            zoom: 130%;
+        }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
 # Background image
 def add_bg_from_local(image_file):
@@ -84,6 +69,7 @@ def add_bg_as_earth(image_file):
             background-color: rgba(0, 0, 0, 0.7);
             border-radius: 20px;
         }}
+#
     </style>
     """,
     unsafe_allow_html=True
@@ -101,7 +87,6 @@ country_list = ['Argentina', 'Australia', 'Austria', 'Belgium', 'Brazil', 'Bulga
 st.title('Renewable Power Prediction')
 st.markdown('Estimate the renewable energy production potential for various energy sources and countries.')
 
-set_dark_mode_and_zoom()
 add_bg_as_earth('power_predict/app/earth.png')
 
 # call parameters
@@ -128,10 +113,10 @@ elif target == 'Total':
     add_bg_from_local('power_predict/app/total.jpg')
 
 #  local
-api_url_ = 'http://127.0.0.1:8000/predict'
+# api_url_ = 'http://127.0.0.1:8000/predict'
 
 # cloud image
-# api_url_ = 'https://prod-irosqzxbhq-ew.a.run.app/predict'
+api_url_ = 'https://prod-irosqzxbhq-ew.a.run.app/predict'
 # 'https://mvp-irosqzxbhq-ew.a.run.app/predict'
 
 
