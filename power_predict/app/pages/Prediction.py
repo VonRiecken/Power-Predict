@@ -67,10 +67,10 @@ elif target == 'Total':
     add_bg_from_local('power_predict/app/total.jpg')
 
 #  local
-api_url_ = 'http://127.0.0.1:8000/predict'
+# api_url_ = 'http://127.0.0.1:8000/predict'
 
 # cloud image
-# api_url_ = 'https://stage1-irosqzxbhq-ew.a.run.app/predict'
+api_url_ = 'https://prod-irosqzxbhq-ew.a.run.app/predict'
 # 'https://mvp-irosqzxbhq-ew.a.run.app/predict'
 
 
