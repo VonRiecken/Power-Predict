@@ -3,6 +3,13 @@ import pandas as pd
 import requests
 import base64
 
+st.set_page_config(
+    page_title="Renewable Energy Production Prediction",
+    page_icon="🌍",
+    layout="centered",
+    initial_sidebar_state='collapsed'
+)
+
 # Background image
 def add_bg_from_local(image_file):
     with open(image_file, "rb") as image_file:
