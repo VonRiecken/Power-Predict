@@ -28,7 +28,7 @@ def add_bg_from_local(image_file):
     unsafe_allow_html=True
     )
 
-add_bg_from_local('power_predict/app/wind.jpg')
+add_bg_from_local('power_predict/app/earth_spin.gif')
 
 st.subheader("Data Sources:")
 st.markdown("""
