@@ -1,5 +1,4 @@
 import streamlit as st
-from power_predict.app.app import add_bg_from_local
 import base64
 
 # Background image
