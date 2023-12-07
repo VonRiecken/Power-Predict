@@ -1,0 +1,11 @@
+pytest
+pylint
+ipdb
+numpy
+pandas
+scikit-learn
+requests
+streamlit
+uvicorn
+fastapi
+docker
