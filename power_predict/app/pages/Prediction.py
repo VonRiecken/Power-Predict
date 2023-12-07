@@ -56,7 +56,7 @@ humidity = st.slider('Relative humidity 💦 (%)', 0, 100, 50, 1)
 
 # Set background
 if target == '--Select--':
-    add_bg_from_local('power_predict/app/wind.jpg')
+    add_bg_from_local('power_predict/app/earth_spin.gif')
 elif target == 'Solar':
     add_bg_from_local('power_predict/app/solar.jpg')
 elif target == 'Wind':
