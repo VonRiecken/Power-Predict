@@ -95,9 +95,9 @@ country = st.selectbox('Country 🌍', country_list)
 date = st.date_input('Select month and year of prediction 📅 (any day in the month)')
 # formatted_date = pd.to_datetime(date).strftime('%Y-%m')
 formatted_date = date.strftime('%Y-%m')
-temp = st.number_input('Avergage temperature 🌡️ (°C)', format='%.2f')
-irradiance = st.number_input('Global Horizontal Irrandiance 🌤️ (W/m²)', format='%.0f')
-precipitation = st.number_input('Total precipitaiton ☔️ (mm)', format='%.4f')
+temp = st.number_input('Average temperature 🌡️ (°C)', format='%.2f')
+irradiance = st.number_input('Solar irradiance 🌤️ (W per m²)', format='%.0f')
+precipitation = st.number_input('Total precipitation ☔️ (mm)', format='%.4f')
 humidity = st.slider('Relative humidity 💦 (%)', 0, 100, 50, 1)
 
 # Set background
